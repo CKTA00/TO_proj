@@ -7,7 +7,7 @@ class Application
 
 
 
-node PaymentSystem{
+package "Payment System"{
    class CashMachine
    {
        +enterCoin(Denomination coins)
@@ -27,7 +27,8 @@ node PaymentSystem{
    }
 }
 
-node GUI{
+
+package "Physical User Interface"{
     interface IDisplay{
         +ShowMessage(String msg): void
     }
@@ -44,6 +45,7 @@ node GUI{
         CANCEL_BUTTON
     }
 
+
     interface IGuiEventListener
     {
         -buttonPressed(): void
@@ -52,10 +54,41 @@ node GUI{
 
     class TestingConsoleUI implements IDisplay,IPaymentDevice{
     }
+
+    interface IGate{
+            +open()
+            -closeIfClear()
+        }
 }
 
+package ParkingSystem{
+    interface IPlaceCounter{
+        +tryDriveIn(): void
+        +driveOut(): void
+    }
+
+    class NormalPlaces implements IPlaceCounter
+    class HandicappedPlaces implements IPlaceCounter
+    ' ? class PremiumPlaces implements IPlaceCounter
+}
+
+package PremiumUser{
+
+    interface IDriverDatabase
+    {
+        +register(String driversPlate): void
+    }
+    class PremiumProxy implements IDriverDatabase{
+
+    }
+    class PremiumDatabase implements IDriverDatabase{
+    }
 
 
+    PremiumProxy --> PremiumDatabase :uses
+}
+
+PremiumDatabase <.. CashMachine :check if premium\n(free entrance)
 
 
 
@@ -64,8 +97,16 @@ CashMachine o--> CashChangeStrategy
 CashMachine *-- Denomination
 Denomination . CashChangeStrategy
 
-IGuiEventListener <|-- CashMachine
+IGate <-- CashMachine :uses
+IGuiEventListener <|.. CashMachine
 CashMachine --> IPaymentDevice :uses
+
 IPaymentDevice o--"multiple lists" IGuiEventListener
+
+Application --> CashMachine :initialize\npayment
+Application --> IPlaceCounter :check if\navailable space
+PremiumProxy <-- "register user" Application
+
+IPaymentDevice - ButtonKey
 
 @enduml
