@@ -5,4 +5,34 @@ class Application
     +run()
 }
 
+
+
+node PaymentSystem{
+   class CashMachine
+   {
+       +enterCoin(Denomination coins)
+       +acceptPayment(): void
+       -disposeChange(): void
+   }
+
+   class Denomination
+   {
+       -valueInGR: int
+       +amount: int
+   }
+
+   interface CashChangeStrategy
+   {
+
+   }
+}
+
+
+
+
+
+CashMachine o--> CashChangeStrategy
+CashMachine *-- Denomination
+Denomination . CashChangeStrategy
+
 @enduml
