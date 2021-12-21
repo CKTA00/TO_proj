@@ -27,6 +27,35 @@ node PaymentSystem{
    }
 }
 
+node GUI{
+    interface IDisplay{
+        +ShowMessage(String msg): void
+    }
+
+    interface IPaymentDevice{
+        +disposeChange(Denomination coins): void
+        -acceptButtonPressed(): void
+        -cancelButtonPressed(): void
+        +addObserverToButton(ButtonKey key, IGuiEventListener observer): void
+    }
+
+    enum ButtonKey{
+        ACCEPT_BUTTON
+        CANCEL_BUTTON
+    }
+
+    interface IGuiEventListener
+    {
+        -buttonPressed(): void
+    }
+    'note left: observer\npattern
+
+    class TestingConsoleUI implements IDisplay,IPaymentDevice{
+    }
+}
+
+
+
 
 
 
@@ -34,5 +63,9 @@ node PaymentSystem{
 CashMachine o--> CashChangeStrategy
 CashMachine *-- Denomination
 Denomination . CashChangeStrategy
+
+IGuiEventListener <|-- CashMachine
+CashMachine --> IPaymentDevice :uses
+IPaymentDevice o--"multiple lists" IGuiEventListener
 
 @enduml
