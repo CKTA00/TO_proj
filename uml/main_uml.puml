@@ -1,14 +1,33 @@
 @startuml
 
-class Application
+skinparam class {
+BackgroundColor<<Main>> Snow
+BorderColor<<Main>> Orange
+}
+skinparam stereotypeCBackgroundColor<< Main >> Khaki
+
+class ApplicationClient<<Main>>
 {
-    +run()
+    +{static}main()
+    -{static}simulateSystem()
 }
 
+class Application
+{
+    +register()
+    +entrance()
+    +exit()
+}
 
+ApplicationClient -> Application
+ApplicationClient -> ConsoleDisplay
 
 package "Payment System"{
-   class CashMachine
+   interface IPaymentMachine
+   {
+   }
+
+   class CashMachine implements IPaymentMachine
    {
        +enterCoin(Denomination coins)
        +acceptPayment(): void
@@ -27,18 +46,46 @@ package "Payment System"{
    }
 }
 
-
-package "Physical User Interface"{
+package "Console Environment"{
     interface IDisplay{
         +ShowMessage(String msg): void
     }
 
-    interface IPaymentDevice{
-        +disposeChange(Denomination coins): void
-        -acceptButtonPressed(): void
-        -cancelButtonPressed(): void
-        +addObserverToButton(ButtonKey key, IGuiEventListener observer): void
+    class ConsoleDisplay implements IDisplay{
     }
+
+    class MachineScreenDisplay implements IDisplay{
+    }
+
+    Note bottom of MachineScreenDisplay: This would API of real\nparking machine, but instead\nit uses console effectively\ncreating proxy pattern.
+
+
+    MachineScreenDisplay -> ConsoleDisplay
+}
+
+
+package "User Interface"<<UI systems of various devices>>{
+
+
+    class Device <<Abstract>>{
+        -acceptButtonPressed(): void
+        +AddButtonObserver(ButtonKey key, IGuiEventListener observer): void
+        +RemoveButtonObserver(ButtonKey key, IGuiEventListener observer): void
+    }
+
+
+    class RegisterSystem extends Device
+    {
+        -cancelButtonPressed(): void
+        +keyboardInput(): string
+    }
+
+    class Gate<<Abstract>> extends Device{
+        +open()
+        -closeIfClear()
+    }
+
+
 
     enum ButtonKey{
         ACCEPT_BUTTON
@@ -46,29 +93,55 @@ package "Physical User Interface"{
     }
 
 
+    class ExitParkingMachine extends Gate
+    {
+        -disposeChange(Denomination coins): void
+    }
+
+    class EntranceParkingMachine extends Gate
+    {
+
+    }
+
+
     interface IGuiEventListener
     {
         -buttonPressed(): void
     }
-    'note left: observer\npattern
+    note left: observer\npattern
 
-    class TestingConsoleUI implements IDisplay,IPaymentDevice{
-    }
 
-    interface IGate{
-            +open()
-            -closeIfClear()
-        }
+    Device ..> MachineScreenDisplay: uses
 }
 
+
+
 package ParkingSystem{
-    interface IPlaceCounter{
+    class TicketDatabase{
+        -normalCounter: int
+        -handicappedCounter: int
+        +addTicket(): void
+        +evaluateTicket(Ticket t):
         +tryDriveIn(): void
         +driveOut(): void
     }
 
-    class NormalPlaces implements IPlaceCounter
-    class HandicappedPlaces implements IPlaceCounter
+    class Ticket{
+        -code: string
+        -entranceTime: timestamp
+    }
+
+    interface ITicketCodeGenerator
+    {
+        +generate()
+    }
+    note left: strategy\npattern
+
+    class GUIDGenerator implements ITicketCodeGenerator
+
+    TicketDatabase *-- Ticket
+    TicketDatabase -> ITicketCodeGenerator
+
     ' ? class PremiumPlaces implements IPlaceCounter
 }
 
@@ -88,25 +161,22 @@ package PremiumUser{
     PremiumProxy --> PremiumDatabase :uses
 }
 
-PremiumDatabase <.. CashMachine :check if premium\n(free entrance)
-
-
-
-
 CashMachine o--> CashChangeStrategy
 CashMachine *-- Denomination
 Denomination . CashChangeStrategy
 
-IGate <-- CashMachine :uses
+
 IGuiEventListener <|.. CashMachine
-CashMachine --> IPaymentDevice :uses
 
-IPaymentDevice o--"multiple lists" IGuiEventListener
 
-Application --> CashMachine :initialize\npayment
-Application --> IPlaceCounter :check if\navailable space
-PremiumProxy <-- "register user" Application
+Device o---"multiple lists" IGuiEventListener
 
-IPaymentDevice - ButtonKey
+Gate --> TicketDatabase: create and use
+RegisterSystem --> PremiumProxy
+
+TicketDatabase::evaluateTicket --> IPaymentMachine :initialize\npayment
+Application o-->"n" Device
+
+Device - ButtonKey
 
 @enduml
