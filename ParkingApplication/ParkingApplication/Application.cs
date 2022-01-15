@@ -1,19 +1,27 @@
 ﻿using System;
+using ParkingApplication.UserInterface;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ParkingApplication.ParkingSystem;
 
 namespace ParkingApplication
 {
     class Application
     {
+        static TestingConsoleUI ui;
+        static TicketDatabase ticketDB;
         static void Main(string[] args)
         {
-            System.Console.WriteLine("Hello world!");
-            String result = System.Console.ReadLine();
-            System.Console.WriteLine(result);
-            result = System.Console.ReadLine();
+            InitializeSystem();
+            ui.ShowSimulationMenu();
+        }
+
+        static void InitializeSystem()
+        {
+            ui = new TestingConsoleUI();
+            ticketDB = new TicketDatabase();
         }
     }
 }
