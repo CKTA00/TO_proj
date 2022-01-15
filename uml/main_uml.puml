@@ -20,7 +20,7 @@ class Application
 }
 
 ApplicationClient -> Application
-ApplicationClient -> ConsoleDisplay
+
 
 package "Payment System"{
    interface IPaymentMachine
@@ -61,6 +61,7 @@ package "Console Environment"{
 
 
     MachineScreenDisplay -> ConsoleDisplay
+    ApplicationClient -> ConsoleDisplay
 }
 
 
