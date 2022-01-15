@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ParkingApplication.UserInterface
 {
-    interface IDisplay
+    interface ISimpleDialog
     {
-        void OpenGate();
+        void ShowMessage(String msg);
+        String ReadString();
     }
 }

@@ -8,15 +8,27 @@ skinparam stereotypeCBackgroundColor<< Main >> Khaki
 
 class ApplicationClient<<Main>>
 {
-    +{static}main()
-    -{static}simulateSystem()
+    -{static}con
+    -{static}app
+    -{static}Main()
+    -{static}ShowSimulationMenu()
+    -{static}DriveIn()
+    -{static}DriveOut()
+    -{static}Register()
+    '-{static}IncorrectCommand()
 }
 
-class Application
+class Application<<Singleton>>
 {
-    +register()
-    +entrance()
-    +exit()
+    -{static}instance: Application
+    +entranceDevices: List<EntranceParkingMachine>
+    +exitDevices: List<ExitParkingMachine>
+    +registerDevices: List<RegisterSystem>
+    +{static}GetInstance(): Application
+    -Init(): void
+    +GetEntranceDevices(): List
+    +GetExitDevices(): List
+    +GetRegisterDevices(): List
 }
 
 ApplicationClient -> Application
@@ -29,9 +41,9 @@ package "Payment System"{
 
    class CashMachine implements IPaymentMachine
    {
-       +enterCoin(Denomination coins)
-       +acceptPayment(): void
-       -disposeChange(): void
+       +EnterCoin(Denomination coins)
+       +AcceptPayment(): void
+       -DisposeChange(): void
    }
 
    class Denomination
@@ -46,44 +58,59 @@ package "Payment System"{
    }
 }
 
-package "Console Environment"{
+package "User Interface"{
     interface IDisplay{
+        +OpenGate()
+        +DisplayMessageBox()
+    }
+
+    interface ISimpleDialog{
         +ShowMessage(String msg): void
+        +ReadString(): string
     }
 
-    class ConsoleDisplay implements IDisplay{
+    class ConsoleDisplay<<Singleton>> implements ISimpleDialog{
+        -{static}instance: ConsoleDisplay
+        +{static}GetInstance(): ConsoleDisplay
+        +ShowMessage(String msg): void
+        +ReadString(): string
     }
 
-    class MachineScreenDisplay implements IDisplay{
+    class MachineScreenDisplay implements IDisplay, ISimpleDialog{
+
     }
 
-    Note bottom of MachineScreenDisplay: This would API of real\nparking machine, but instead\nit uses console effectively\ncreating proxy pattern.
+    Note bottom of MachineScreenDisplay: This would be API of real\nparking machine, but instead\nit uses console in an\n<b>adapter pattern
 
 
-    MachineScreenDisplay -> ConsoleDisplay
-    ApplicationClient -> ConsoleDisplay
+    MachineScreenDisplay o-> ConsoleDisplay
+    ApplicationClient --> ISimpleDialog
 }
 
 
-package "User Interface"<<UI systems of various devices>>{
+package "Devices"<<UI systems of various devices>>{
 
 
     class Device <<Abstract>>{
-        -acceptButtonPressed(): void
+        -IDisplay: display
+        +{abstract}AcceptButtonPressed(): void
+        +{abstract}Main(): void
         +AddButtonObserver(ButtonKey key, IGuiEventListener observer): void
         +RemoveButtonObserver(ButtonKey key, IGuiEventListener observer): void
+        #NotifyAllButtonPressed(ButtonKey key): void
     }
 
+    'Device *-- "CashMachine?"
 
     class RegisterSystem extends Device
     {
-        -cancelButtonPressed(): void
-        +keyboardInput(): string
+        +CancelButtonPressed(): void
+        +KeyboardInput(): string
     }
 
-    class Gate<<Abstract>> extends Device{
-        +open()
-        -closeIfClear()
+    class GateDevice<<Abstract>> extends Device{
+        +CheckCard()
+        #CloseIfClear()
     }
 
 
@@ -94,12 +121,12 @@ package "User Interface"<<UI systems of various devices>>{
     }
 
 
-    class ExitParkingMachine extends Gate
+    class ExitParkingMachine extends GateDevice
     {
-        -disposeChange(Denomination coins): void
+        #DisposeChange(Denomination coins): void
     }
 
-    class EntranceParkingMachine extends Gate
+    class EntranceParkingMachine extends GateDevice
     {
 
     }
@@ -107,12 +134,12 @@ package "User Interface"<<UI systems of various devices>>{
 
     interface IGuiEventListener
     {
-        -buttonPressed(): void
+        -ButtonPressed(): void
     }
-    note left: observer\npattern
+    note left: observer pattern\n(might be removed if\ncash machine in device)
 
 
-    Device ..> MachineScreenDisplay: uses
+    Device -->  IDisplay
 }
 
 
@@ -121,10 +148,10 @@ package ParkingSystem{
     class TicketDatabase{
         -normalCounter: int
         -handicappedCounter: int
-        +addTicket(): void
-        +evaluateTicket(Ticket t):
-        +tryDriveIn(): void
-        +driveOut(): void
+        +AddTicket(): void
+        +EvaluateTicket(Ticket t):
+        +TryDriveIn(): void
+        +DriveOut(): void
     }
 
     class Ticket{
@@ -134,9 +161,9 @@ package ParkingSystem{
 
     interface ITicketCodeGenerator
     {
-        +generate()
+        +Generate()
     }
-    note left: strategy\npattern
+    note right: <b>Strategy\n<b>pattern
 
     class GUIDGenerator implements ITicketCodeGenerator
 
@@ -150,7 +177,7 @@ package PremiumUser{
 
     interface IDriverDatabase
     {
-        +register(String driversPlate): void
+        +Register(String driversPlate): void
     }
     class PremiumProxy implements IDriverDatabase{
 
@@ -172,8 +199,9 @@ IGuiEventListener <|.. CashMachine
 
 Device o---"multiple lists" IGuiEventListener
 
-Gate --> TicketDatabase: create and use
-RegisterSystem --> PremiumProxy
+GateDevice --> TicketDatabase: create and use
+RegisterSystem --> PremiumProxy: uses
+GateDevice --> PremiumDatabase: uses
 
 TicketDatabase::evaluateTicket --> IPaymentMachine :initialize\npayment
 Application o-->"n" Device

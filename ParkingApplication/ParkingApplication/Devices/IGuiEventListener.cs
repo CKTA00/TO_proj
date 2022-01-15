@@ -1,4 +1,4 @@
-﻿namespace ParkingApplication.UserInterface
+﻿namespace ParkingApplication.Devices
 {
     public interface IGuiEventListener
     {

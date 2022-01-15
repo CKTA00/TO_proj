@@ -43,16 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ParkingSystem\ParkingPlaceManager.cs" />
+    <Compile Include="Application.cs" />
+    <Compile Include="ParkingSystem\Ticket.cs" />
     <Compile Include="ParkingSystem\TicketDatabase.cs" />
-    <Compile Include="UserInterface\ButtonKey.cs" />
+    <Compile Include="Devices\ButtonKey.cs" />
     <Compile Include="UserInterface\ConsoleDisplay.cs" />
     <Compile Include="UserInterface\IDisplay.cs" />
-    <Compile Include="UserInterface\IGuiEventListener.cs" />
-    <Compile Include="UserInterface\IPaymentDevice.cs" />
-    <Compile Include="Application.cs" />
+    <Compile Include="UserInterface\ISimpleDialog.cs" />
+    <Compile Include="Devices\IGuiEventListener.cs" />
+    <Compile Include="Devices\Device.cs" />
+    <Compile Include="ApplicationClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserInterface\TestingConsoleUI.cs" />
+    <Compile Include="UserInterface\MachineScreenDisplay.cs" />
+    <Compile Include="Devices\EntranceParkingMachine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

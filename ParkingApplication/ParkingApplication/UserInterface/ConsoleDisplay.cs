@@ -1,13 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParkingApplication.UserInterface
 {
-    class ConsoleDisplay : IDisplay
+    class ConsoleDisplay : ISimpleDialog
     {
+        static ConsoleDisplay instance;
+
+        private ConsoleDisplay(){}
+
+        public static ConsoleDisplay GetInstance()
+        {
+            if (instance==null)
+                instance = new ConsoleDisplay();
+            return instance;
+        }
+
         public string ReadString()
         {
             System.Console.Write(">");

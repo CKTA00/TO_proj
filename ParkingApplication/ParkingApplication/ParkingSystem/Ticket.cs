@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ParkingApplication.ParkingSystem
 {
-    class ParkingPlaceManager
+    class Ticket
     {
-        // TODO: manages situation when not enough places, probably contains TicketDatabase
+        
     }
 }
