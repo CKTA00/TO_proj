@@ -18,20 +18,20 @@ class ApplicationClient<<Main>>
     '-{static}IncorrectCommand()
 }
 
-class Application<<Singleton>>
+class DeviceFactory<<Singleton>>
 {
-    -{static}instance: Application
+    -{static}instance: DeviceFactory
     +entranceDevices: List<EntranceParkingMachine>
     +exitDevices: List<ExitParkingMachine>
-    +registerDevices: List<RegisterSystem>
-    +{static}GetInstance(): Application
-    -Init(): void
+    +registerDevices: List<RegisterDevice>
+    +{static}GetInstance(): DeviceFactory
+    +Run(): void
     +GetEntranceDevices(): List
     +GetExitDevices(): List
     +GetRegisterDevices(): List
 }
 
-ApplicationClient --> Application: init
+ApplicationClient --> DeviceFactory: init
 
 
 
@@ -39,6 +39,20 @@ ApplicationClient --> Application: init
 package "DeviceInterface"{
     interface IGateAPI{
         +OpenGate()
+    }
+
+    interface IPremiumCardAPI{
+        +AddPremiumCardObserver(IPremiumCard o): void
+        +RemovePremiumCardObserver(IPremiumCard o): void
+        +AnnounceSwipeAll(string data): void
+        +AnnounceSwipe(string data,IPremiumCard o): void
+    }
+
+    interface IScannerAPI{
+        +AddScannerObserver(IScannerObserver o): void
+        +RemoveScannerObserver(IScannerObserver o): void
+        +AnnounceScanAll(string code): void
+        +AnnounceScan(string code, IScannerObserver o): void
     }
 
     interface IPrinterAPI{
@@ -57,7 +71,7 @@ package "DeviceInterface"{
         +ReadString(): string
     }
 
-    class ConsoleMachineAPI implements  ISimpleDialog, IGateAPI, IStandardButtonsAPI, ICashMachineAPI, IPrinterAPI{
+    class ConsoleMachineAPI implements  ISimpleDialog, IGateAPI, IStandardButtonsAPI, ICashMachineAPI, IPrinterAPI,IScannerAPI,IPremiumCardAPI{
 
     }
 
@@ -71,6 +85,8 @@ package "DeviceInterface"{
     }
     IStandardButtonsAPI -d- ButtonKey
     IStandardButtonsAPI o--"list for each\nbutton type" IButtonObserver
+    IPremiumCardAPI o-- IPremiumCardObserver
+    IScannerAPI o-- IScannerObserver
 
     enum ButtonKey{
         ACCEPT_BUTTON
@@ -81,14 +97,23 @@ package "DeviceInterface"{
 
     interface IButtonObserver
     {
-        -ButtonPressed(ButtonKey key): void
+        +ButtonPressed(ButtonKey key): void
     }
-    note bottom: <b>observer\n<b>pattern
+    'note bottom: <b>observer\n<b>pattern
 
+    interface IScannerObserver
+    {
+        +Scan(string code): void
+    }
 
-    ConsoleMachineAPI o-> ConsoleDisplay
+    interface IPremiumCardObserver
+    {
+        +CardSwiped(ButtonKey key): void
+    }
+
+    ConsoleMachineAPI o--> ConsoleDisplay
     ApplicationClient --> ISimpleDialog: use console
-    ApplicationClient --> IStandardButtonsAPI:simulate pressing
+    ApplicationClient -> ConsoleMachineAPI: simulate usecase
 
     package "PaymentSystem"{
        interface ICashMachineAPI
@@ -117,38 +142,36 @@ package "DeviceInterface"{
 
 package "Devices"<<logic of various devices>>{
 
-    class Device <<Abstract>> implements IButtonObserver{
-        -IGateAPI: display
-        '+{abstract}AcceptButtonPressed(): void
+    class Device <<Abstract>> implements IButtonObserver,IPremiumCardObserver{
+        - display: ISimpleDialog
+        - buttons: IStandardButtonsAPI
+        - cardReader: IPremiumCardAPI
+
         +{abstract}Main(): void
     }
 
-    class RegisterSystem extends Device
+    class RegisterDevice extends Device
     {
-        +CancelButtonPressed(): void
-        +KeyboardInput(): string
+        #DisposeChange(Denomination coins): void
     }
 
     class GateDevice<<Abstract>> extends Device{
+        -gate: IGateAPI
         +CheckCard()
         #CloseIfClear()
     }
 
-    class PaymentDevice extends Device{
-        #DisposeChange(Denomination coins): void
-    }
-
     class ExitParkingMachine extends GateDevice
     {
-
+        -ticketPrinter: IPrinterAPI
     }
 
-    class EntranceParkingMachine extends GateDevice
+    class EntranceParkingMachine extends GateDevice implements IScannerObserver
     {
-
+        -scanner: IScannerAPI
     }
 }
-"Devices"->"DeviceInterface": devices are\nusing various\ninterfaces
+'"Devices"->"DeviceInterface": devices are\nusing various\ninterfaces
 
 
 package ParkingSystem{
@@ -168,30 +191,51 @@ package ParkingSystem{
     }
     note bottom: <b>flyweight pattern
 
-    interface ITicketCodeGenerator
-    {
-        +Generate()
-    }
-    note right: <b>strategy\n<b>pattern
 
-    class GUIDGenerator implements ITicketCodeGenerator
 
     TicketDatabase *-- Ticket
-    TicketDatabase -> ITicketCodeGenerator
+
 
     ' ? class PremiumPlaces implements IPlaceCounter
 }
 
-package PremiumUser{
+package "Util"{
+    interface ITicketCodeGenerator
+    {
+        +Generate()
+    }
 
-    interface IDriverDatabase
+
+    class GUIDGenerator implements ITicketCodeGenerator
+    {
+    }
+    note bottom of GUIDGenerator: <b>strategy\n<b>pattern
+
+
+}
+
+TicketDatabase --> ITicketCodeGenerator
+IPremiumDatabase --> ITicketCodeGenerator
+
+package Premium{
+
+    interface IPremiumDatabase
     {
         +Register(String driversPlate): void
+        +ExtendPremium(String driversPlate, DateTime extendTo): void
     }
-    class PremiumProxy implements IDriverDatabase{
+
+    class PremiumProxy implements IPremiumDatabase{
 
     }
-    class PremiumDatabase implements IDriverDatabase{
+    class PremiumDatabase implements IPremiumDatabase{
+    }
+
+    PremiumDatabase *-- PremiumUser
+    class PremiumUser{
+        -code: string
+        -expireDate: DateTime
+        -licencePlate: string
     }
 
 
@@ -201,14 +245,16 @@ package PremiumUser{
 
 
 
+() " "
+
+DeviceFactory *-- " ": contains
+Devices o--> " ": uses
+" " --> TicketDatabase
+" " --> IPremiumDatabase
+'RegisterDevice --> PremiumProxy: uses
+'GateDevice --> PremiumDatabase: usu
 
 
-
-Devices o--> TicketDatabase: uses
-RegisterSystem --> PremiumProxy: uses
-GateDevice --> PremiumDatabase: \n\n\n\n\n\n\nuses
-'some smelly tricks right here
-
-Application o-->"n" Device
+DeviceFactory o-->"n" Device
 
 @enduml
