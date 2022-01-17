@@ -117,6 +117,7 @@ package "Devices"<<UI systems of various devices>>{
 
     enum ButtonKey{
         ACCEPT_BUTTON
+        SPECIAL_BUTTON
         CANCEL_BUTTON
     }
 
