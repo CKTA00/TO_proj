@@ -145,18 +145,19 @@ package "Devices"<<UI systems of various devices>>{
 
 
 package ParkingSystem{
+
     class TicketDatabase{
-        -normalCounter: int
-        -handicappedCounter: int
-        +AddTicket(): void
-        +EvaluateTicket(Ticket t):
-        +TryDriveIn(): void
-        +DriveOut(): void
+        -counter: int
+        -maxPlaces: int
+        +TryAddTicket(): void
+        +EvaluateTicket(string code):
     }
 
-    class Ticket{
+    class Ticket<<immutable>>{
         -code: string
-        -entranceTime: timestamp
+        -entranceTime: DateTime
+        +Code.get(): string
+        +EntanceTime.get(): DateTime
     }
 
     interface ITicketCodeGenerator
@@ -199,7 +200,8 @@ IGuiEventListener <|.. CashMachine
 
 Device o---"multiple lists" IGuiEventListener
 
-GateDevice --> TicketDatabase: create and use
+GateDevice o-->"2 (normal,handicapped)" TicketDatabase: use
+GateDevice <.. TicketDatabase: notifies all?
 RegisterSystem --> PremiumProxy: uses
 GateDevice --> PremiumDatabase: uses
 
