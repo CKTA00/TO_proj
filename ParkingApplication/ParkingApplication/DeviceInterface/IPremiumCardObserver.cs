@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParkingApplication.ParkingSystem
+namespace ParkingApplication.DeviceInterface
 {
-    interface ICodeGenerator
+    interface IPremiumCardObserver
     {
-        string Generate();
+        void CardSwiped(string code);
     }
 }

@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParkingApplication.Devices
+namespace ParkingApplication.DeviceInterface
 {
-    enum ButtonKey
+    interface ICodeScannerObserver
     {
-        ACCEPT_BUTTON,
-        SPECIAL_BUTTON,
-        CANCEL_BUTTON
+        void CodeScanned(string code);
     }
 }

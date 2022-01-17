@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParkingApplication.ParkingSystem
+namespace ParkingApplication.Util
 {
     class GUIDGenerator : ICodeGenerator
     {

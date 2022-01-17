@@ -43,23 +43,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
+    <Compile Include="DeviceFactory.cs" />
+    <Compile Include="CashSystem\AllowedDenominations.cs" />
+    <Compile Include="CashSystem\Denomination.cs" />
+    <Compile Include="DeviceInterface\ICodeScannerObserver.cs" />
+    <Compile Include="DeviceInterface\IPremiumCardAPI.cs" />
+    <Compile Include="DeviceInterface\IPremiumCardObserver.cs" />
+    <Compile Include="DeviceInterface\IScannerAPI.cs" />
+    <Compile Include="DeviceInterface\IStandardButtonsAPI.cs" />
+    <Compile Include="Devices\ExitParkingDevice.cs" />
     <Compile Include="Devices\GateDevice.cs" />
-    <Compile Include="ParkingSystem\GUIDGenerator.cs" />
-    <Compile Include="ParkingSystem\ICodeGenerator.cs" />
+    <Compile Include="Premium\InvalidPremiumUserCodeException.cs" />
+    <Compile Include="Util\GUIDGenerator.cs" />
+    <Compile Include="Util\ICodeGenerator.cs" />
+    <Compile Include="ParkingSystem\InvalidTicketCodeException.cs" />
     <Compile Include="ParkingSystem\NoPlaceLeftException.cs" />
     <Compile Include="ParkingSystem\Ticket.cs" />
     <Compile Include="ParkingSystem\TicketDatabase.cs" />
-    <Compile Include="Devices\ButtonKey.cs" />
-    <Compile Include="UserInterface\ConsoleDisplay.cs" />
-    <Compile Include="UserInterface\IMachineAPI.cs" />
-    <Compile Include="UserInterface\ISimpleDialog.cs" />
-    <Compile Include="Devices\IGuiEventListener.cs" />
+    <Compile Include="DeviceInterface\ButtonKey.cs" />
+    <Compile Include="DeviceInterface\ConsoleDisplay.cs" />
+    <Compile Include="DeviceInterface\ICashMachineAPI.cs" />
+    <Compile Include="DeviceInterface\IGateAPI.cs" />
+    <Compile Include="DeviceInterface\IPrinterAPI.cs" />
+    <Compile Include="DeviceInterface\ISimpleDialog.cs" />
+    <Compile Include="DeviceInterface\IButtonObserver.cs" />
     <Compile Include="Devices\Device.cs" />
     <Compile Include="ApplicationClient.cs" />
+    <Compile Include="Premium\PremiumUser.cs" />
+    <Compile Include="Premium\PremiumDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserInterface\ConsoleMachineAPI.cs" />
-    <Compile Include="Devices\EntranceParkingMachine.cs" />
+    <Compile Include="DeviceInterface\ConsoleMachineAPI.cs" />
+    <Compile Include="Devices\EntranceParkingDevice.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

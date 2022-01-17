@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParkingApplication.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,9 +46,16 @@ namespace ParkingApplication.ParkingSystem
             }
         }
 
-        public bool EvaluateTicket(string code)
+        public Ticket TryEvaluateTicket(string code)
         {
-            return tickets.ContainsKey(code) && tickets[code].Code == code; //whatever, chcek both
+            if(tickets.ContainsKey(code) && tickets[code].Code == code) //whatever, chcek both
+            {
+                return tickets[code];
+            }
+            else
+            {
+                throw new InvalidTicketCodeException();
+            }
         }
     }
 }

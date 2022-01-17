@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParkingApplication.UserInterface
+namespace ParkingApplication.DeviceInterface
 {
-    interface IMachineAPI
+    interface IGateAPI
     {
-        void PrintTicket(Ticket t);
         void OpenGate();
     }
 }

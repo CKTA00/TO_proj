@@ -1,21 +1,43 @@
 ﻿using System;
 using ParkingApplication.Devices;
-using ParkingApplication.UserInterface;
+using ParkingApplication.DeviceInterface;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ParkingApplication.ParkingSystem;
+using ParkingApplication.Util;
 
 namespace ParkingApplication
 {
     class ApplicationClient
     {
+        static ConsoleMachineAPI machine;
+        static ICodeGenerator generator;
         static ISimpleDialog con;
-        static Application app;
+        static DeviceFactory app;
+        static TicketDatabase normalTicketDB;
+        static TicketDatabase handicappedTicketDB;
         static void Main(string[] args)
         {
             con = ConsoleDisplay.GetInstance();
-            app = Application.GetInstance();
+            machine = new ConsoleMachineAPI();
+            generator = new GUIDGenerator();
+
+            normalTicketDB = new TicketDatabase(generator, 40);
+            handicappedTicketDB = new TicketDatabase(generator, 5);
+
+            app = DeviceFactory.GetInstance();
+            app.Buttons = machine;
+            app.CardReaader = machine;
+            app.Gate = machine;
+            app.HandicappedTicketDB = handicappedTicketDB;
+            app.NormalTicketDB = normalTicketDB;
+            app.Scanner = machine;
+            app.TicketPrinter = machine;
+            app.Ui = machine;
+            app.Run();
+
             ShowSimulationMenu();
         }
 
@@ -60,7 +82,7 @@ namespace ParkingApplication
 
         static void DriveIn()
         {
-            EntranceParkingMachine device = app.GetEntranceDevices()[0];
+            EntranceParkingDevice device = app.GetEntranceDevices()[0];
             device.Main();
 
             while (true)
@@ -74,7 +96,7 @@ namespace ParkingApplication
                 string command = con.ReadString();
                 if (command == "press")
                 {
-                    device.AcceptButtonPressed();
+                    machine.AnnounceButtonPressed(ButtonKey.ACCEPT_BUTTON, device);
                     con.ShowMessage("Zaparkowałeś!");
                     con.ShowMessage("");
                     con.ShowMessage("");
@@ -95,27 +117,14 @@ namespace ParkingApplication
             }
         }
 
-        private static void SwipeCard(EntranceParkingMachine device)
+        private static void SwipeCard(EntranceParkingDevice device)
         {
-            int cardId;
-            string inputString;
-            while (true)
-            {
-                con.ShowMessage("Podaj ID karty, którą przybliżyłeś: ");
-                inputString = con.ReadString();
-                if (int.TryParse(inputString,out cardId))
-                {
-                    break;
-                }
-                else
-                {
-                    con.ShowMessage("Nieprawidłowe id");
-                    con.ShowMessage("");
-                    con.ShowMessage("");
-                }
-            }
-            
-            device.CheckCard(cardId);
+            string cardCode;
+
+            con.ShowMessage("Podaj kod karty, którą przybliżyłeś: ");
+            cardCode = con.ReadString();
+
+            machine.AnnounceSwipe(cardCode, device);
         }
 
         private static void IncorrectCommand()

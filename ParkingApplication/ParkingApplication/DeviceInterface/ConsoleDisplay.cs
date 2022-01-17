@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ParkingApplication.UserInterface
+namespace ParkingApplication.DeviceInterface
 {
     class ConsoleDisplay : ISimpleDialog
     {
