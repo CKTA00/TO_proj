@@ -59,7 +59,7 @@ package "Payment System"{
 }
 
 package "User Interface"{
-    interface IDisplay{
+    interface IMachineAPI{
         +OpenGate()
         +DisplayMessageBox()
     }
@@ -76,14 +76,14 @@ package "User Interface"{
         +ReadString(): string
     }
 
-    class MachineScreenDisplay implements IDisplay, ISimpleDialog{
+    class ConsoleMachineAPI implements IMachineAPI, ISimpleDialog{
 
     }
 
-    Note bottom of MachineScreenDisplay: This would be API of real\nparking machine, but instead\nit uses console in an\n<b>adapter pattern
+    Note bottom of ConsoleMachineAPI: This would be API of real\nparking machine, but instead\nit uses console in an\n<b>adapter pattern
 
 
-    MachineScreenDisplay o-> ConsoleDisplay
+    ConsoleMachineAPI o-> ConsoleDisplay
     ApplicationClient --> ISimpleDialog
 }
 
@@ -92,7 +92,7 @@ package "Devices"<<UI systems of various devices>>{
 
 
     class Device <<Abstract>>{
-        -IDisplay: display
+        -IMachineAPI: display
         +{abstract}AcceptButtonPressed(): void
         +{abstract}Main(): void
         +AddButtonObserver(ButtonKey key, IGuiEventListener observer): void
@@ -139,7 +139,8 @@ package "Devices"<<UI systems of various devices>>{
     note left: observer pattern\n(might be removed if\ncash machine in device)
 
 
-    Device -->  IDisplay
+    GateDevice -->  IMachineAPI
+    Device -->  ISimpleDialog
 }
 
 

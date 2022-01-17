@@ -32,9 +32,9 @@ namespace ParkingApplication.ParkingSystem
 
         public Ticket TryAddTicket()
         {
-            if (counter + 1 > placesMax)
+            if (counter + 1 <= placesMax)
             {
-                Ticket t = new Ticket("c", DateTime.Now);
+                Ticket t = new Ticket(generator.Generate(), DateTime.Now);
                 tickets.Add(t.Code, t);
                 counter++;
                 return t;

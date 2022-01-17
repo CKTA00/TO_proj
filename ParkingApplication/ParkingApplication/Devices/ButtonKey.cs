@@ -9,6 +9,7 @@ namespace ParkingApplication.Devices
     enum ButtonKey
     {
         ACCEPT_BUTTON,
+        SPECIAL_BUTTON,
         CANCEL_BUTTON
     }
 }

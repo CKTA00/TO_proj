@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using ParkingApplication.ParkingSystem;
 using ParkingApplication.UserInterface;
 
 namespace ParkingApplication.Devices
 {
-    class EntranceParkingMachine : Device
+    class EntranceParkingMachine : GateDevice
     {
-        public EntranceParkingMachine(ISimpleDialog ui):base(ui)
+        public EntranceParkingMachine(ISimpleDialog display, IMachineAPI machine, TicketDatabase normalTicketsDB,TicketDatabase handicappedTicketsDB)
+            :base(display, machine, normalTicketsDB, handicappedTicketsDB)
         {
-            //nothing?
+
         }
 
         public override void Main()
@@ -19,10 +21,18 @@ namespace ParkingApplication.Devices
 
         public override void AcceptButtonPressed()
         {
-            // TODO: generate code
-            display.ShowMessage("[Wysuwa bilet z kodem kreskowym " + "temp" + "]"); // TODO: replace with action function (not message)
-            display.ShowMessage("Zachowaj ten bilet do wyjazdu z parkingu.");
-            // TODO: open gate
+            Ticket ticket;
+            try
+            {
+                ticket = normalTicketsDB.TryAddTicket();
+            }
+            catch(NoPlaceLeftException e)
+            {
+                display.ShowMessage("Brak miejsc parkingowych! e:"+ e.Message);
+                return;
+            }
+            machine.PrintTicket(ticket);
+            machine.OpenGate();
         }
 
         public void CheckCard(int data)

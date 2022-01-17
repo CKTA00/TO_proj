@@ -12,9 +12,11 @@ namespace ParkingApplication
 {
     class Application
     {
-        MachineScreenDisplay ui;
-        TicketDatabase ticketDB;
+        ISimpleDialog ui;
+        TicketDatabase normalTicketDB;
+        TicketDatabase handicappedTicketDB;
         List<EntranceParkingMachine> entanceDevices;
+        IMachineAPI entranceMachine;
         //TODO: lists of devices of each type
 
         private static Application instance;
@@ -33,10 +35,15 @@ namespace ParkingApplication
 
         private void Init()
         {
-            ui = new MachineScreenDisplay();
-            ticketDB = new TicketDatabase();
+            ui = ConsoleDisplay.GetInstance();
+            ICodeGenerator generator = new GUIDGenerator();
+            normalTicketDB = new TicketDatabase(generator,40);
+            handicappedTicketDB = new TicketDatabase(generator,5);
+
+            entranceMachine = new ConsoleMachineAPI();
             entanceDevices = new List<EntranceParkingMachine>();
-            entanceDevices.Add(new EntranceParkingMachine(ui));
+            entanceDevices.Add(new EntranceParkingMachine(ui,entranceMachine,normalTicketDB,handicappedTicketDB));
+            // TODO: maybe run each device on its own thread?
             //entanceDevices[0].Main();
         }
 

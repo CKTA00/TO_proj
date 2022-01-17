@@ -75,6 +75,10 @@ namespace ParkingApplication
                 if (command == "press")
                 {
                     device.AcceptButtonPressed();
+                    con.ShowMessage("Zaparkowałeś!");
+                    con.ShowMessage("");
+                    con.ShowMessage("");
+                    break;
                 }
                 else if (command == "card")
                 {
