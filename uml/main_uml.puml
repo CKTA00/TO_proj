@@ -31,7 +31,7 @@ class Application<<Singleton>>
     +GetRegisterDevices(): List
 }
 
-ApplicationClient -> Application
+ApplicationClient --> Application
 
 
 package "Payment System"{
@@ -160,12 +160,13 @@ package ParkingSystem{
         +Code.get(): string
         +EntanceTime.get(): DateTime
     }
+    note bottom: <b>flyweight pattern
 
     interface ITicketCodeGenerator
     {
         +Generate()
     }
-    note right: <b>Strategy\n<b>pattern
+    note right: <b>strategy\n<b>pattern
 
     class GUIDGenerator implements ITicketCodeGenerator
 
