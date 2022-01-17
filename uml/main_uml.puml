@@ -31,37 +31,18 @@ class Application<<Singleton>>
     +GetRegisterDevices(): List
 }
 
-ApplicationClient --> Application
+ApplicationClient --> Application: init
 
 
-package "Payment System"{
-   interface IPaymentMachine
-   {
-   }
 
-   class CashMachine implements IPaymentMachine
-   {
-       +EnterCoin(Denomination coins)
-       +AcceptPayment(): void
-       -DisposeChange(): void
-   }
 
-   class Denomination
-   {
-       -valueInGR: int
-       +amount: int
-   }
-
-   interface CashChangeStrategy
-   {
-
-   }
-}
-
-package "User Interface"{
-    interface IMachineAPI{
+package "DeviceInterface"{
+    interface IGateAPI{
         +OpenGate()
-        +DisplayMessageBox()
+    }
+
+    interface IPrinterAPI{
+        +PrintTicket(Ticket t)
     }
 
     interface ISimpleDialog{
@@ -76,31 +57,71 @@ package "User Interface"{
         +ReadString(): string
     }
 
-    class ConsoleMachineAPI implements IMachineAPI, ISimpleDialog{
+    class ConsoleMachineAPI implements  ISimpleDialog, IGateAPI, IStandardButtonsAPI, ICashMachineAPI, IPrinterAPI{
 
     }
 
-    Note bottom of ConsoleMachineAPI: This would be API of real\nparking machine, but instead\nit uses console in an\n<b>adapter pattern
+    Note bottom of ConsoleMachineAPI: This would be API of real\nparking machine, but instead\nit uses console via\n<b>adapter pattern
+
+    interface IStandardButtonsAPI {
+        +AddButtonObserver(ButtonKey key, IButtonObserver o): void
+        +RemoveButtonObserver(ButtonKey key, IButtonObserver o): void
+        +AnnounceButtonPressedAll(ButtonKey key): void
+        +AnnounceButtonPressed(ButtonKey key,IButtonObserver o): void
+    }
+    IStandardButtonsAPI -d- ButtonKey
+    IStandardButtonsAPI o--"list for each\nbutton type" IButtonObserver
+
+    enum ButtonKey{
+        ACCEPT_BUTTON
+        SPECIAL_BUTTON
+        CANCEL_BUTTON
+    }
+
+
+    interface IButtonObserver
+    {
+        -ButtonPressed(ButtonKey key): void
+    }
+    note bottom: <b>observer\n<b>pattern
 
 
     ConsoleMachineAPI o-> ConsoleDisplay
-    ApplicationClient --> ISimpleDialog
+    ApplicationClient --> ISimpleDialog: use console
+    ApplicationClient --> IStandardButtonsAPI:simulate pressing
+
+    package "PaymentSystem"{
+       interface ICashMachineAPI
+       {
+           +InsertCoin(AllowedDenominations denomination): void
+           +PayByDebitCard(string debitCardData, int valuePLN, int valueGR): bool
+       }
+
+       class Denomination
+       {
+           -valueInGR: int
+           +amount: int
+       }
+
+       interface CashChangeStrategy
+       {
+
+       }
+
+       ICashMachineAPI o--> CashChangeStrategy
+       ICashMachineAPI *-- Denomination
+       Denomination . CashChangeStrategy
+    }
 }
 
 
-package "Devices"<<UI systems of various devices>>{
+package "Devices"<<logic of various devices>>{
 
-
-    class Device <<Abstract>>{
-        -IMachineAPI: display
-        +{abstract}AcceptButtonPressed(): void
+    class Device <<Abstract>> implements IButtonObserver{
+        -IGateAPI: display
+        '+{abstract}AcceptButtonPressed(): void
         +{abstract}Main(): void
-        +AddButtonObserver(ButtonKey key, IGuiEventListener observer): void
-        +RemoveButtonObserver(ButtonKey key, IGuiEventListener observer): void
-        #NotifyAllButtonPressed(ButtonKey key): void
     }
-
-    'Device *-- "CashMachine?"
 
     class RegisterSystem extends Device
     {
@@ -113,37 +134,21 @@ package "Devices"<<UI systems of various devices>>{
         #CloseIfClear()
     }
 
-
-
-    enum ButtonKey{
-        ACCEPT_BUTTON
-        SPECIAL_BUTTON
-        CANCEL_BUTTON
+    class PaymentDevice extends Device{
+        #DisposeChange(Denomination coins): void
     }
-
 
     class ExitParkingMachine extends GateDevice
     {
-        #DisposeChange(Denomination coins): void
+
     }
 
     class EntranceParkingMachine extends GateDevice
     {
 
     }
-
-
-    interface IGuiEventListener
-    {
-        -ButtonPressed(): void
-    }
-    note left: observer pattern\n(might be removed if\ncash machine in device)
-
-
-    GateDevice -->  IMachineAPI
-    Device -->  ISimpleDialog
 }
-
+"Devices"->"DeviceInterface": devices are\nusing various\ninterfaces
 
 
 package ParkingSystem{
@@ -193,24 +198,17 @@ package PremiumUser{
     PremiumProxy --> PremiumDatabase :uses
 }
 
-CashMachine o--> CashChangeStrategy
-CashMachine *-- Denomination
-Denomination . CashChangeStrategy
 
 
-IGuiEventListener <|.. CashMachine
 
 
-Device o---"multiple lists" IGuiEventListener
 
-GateDevice o-->"2 (normal,handicapped)" TicketDatabase: use
-GateDevice <.. TicketDatabase: notifies all?
+
+Devices o--> TicketDatabase: uses
 RegisterSystem --> PremiumProxy: uses
-GateDevice --> PremiumDatabase: uses
+GateDevice --> PremiumDatabase: \n\n\n\n\n\n\nuses
+'some smelly tricks right here
 
-TicketDatabase::evaluateTicket --> IPaymentMachine :initialize\npayment
 Application o-->"n" Device
-
-Device - ButtonKey
 
 @enduml
