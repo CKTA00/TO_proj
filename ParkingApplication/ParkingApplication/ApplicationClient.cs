@@ -17,16 +17,19 @@ namespace ParkingApplication
         static ICodeGenerator generator;
         static ISimpleDialog con;
         static DeviceBuilder builder;
-        static TicketDatabase normalTicketDB;
-        static TicketDatabase handicappedTicketDB;
+
+        static List<EntranceParkingDevice> entanceDevices;
+        static List<ExitParkingDevice> exitDevices;
+        static List<RegisterDevice> registerDevices;
+
         static void Main(string[] args)
         {
             con = ConsoleDisplay.GetInstance();
             machine = new ConsoleMachineAPI();
             generator = new GUIDGenerator();
 
-            normalTicketDB = new TicketDatabase(generator, 40);
-            handicappedTicketDB = new TicketDatabase(generator, 5);
+            TicketDatabase normalTicketDB = new TicketDatabase(generator, 40);
+            TicketDatabase handicappedTicketDB = new TicketDatabase(generator, 5);
             PremiumDatabase premiumDatabase = new PremiumDatabase(generator);
 
             builder = DeviceBuilder.GetInstance();
@@ -38,8 +41,16 @@ namespace ParkingApplication
             builder.PremiumDatabase = premiumDatabase;
             builder.Scanner = machine;
             builder.TicketPrinter = machine;
-            builder.Ui = machine;
-            builder.Run();
+            builder.Dialog = machine;
+
+            entanceDevices = new List<EntranceParkingDevice>();
+            entanceDevices.Add(builder.BuildEntranceParkingDevice());
+
+            exitDevices = new List<ExitParkingDevice>();
+            exitDevices.Add(builder.BuildExitParkingDevice());
+
+            registerDevices = new List<RegisterDevice>();
+            registerDevices.Add(builder.BuildRegisterDevice());
 
             ShowSimulationMenu();
         }
@@ -85,7 +96,7 @@ namespace ParkingApplication
 
         static void DriveIn()
         {
-            EntranceParkingDevice device = builder.GetEntranceDevices()[0];
+            EntranceParkingDevice device = entanceDevices[0];
             device.Main();
 
             while (true)

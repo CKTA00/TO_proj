@@ -6,7 +6,7 @@ using ParkingApplication.Premium;
 
 namespace ParkingApplication.Devices
 {
-    class RegisterDevice : Device, IPaymentDone
+    class RegisterDevice : Device, ICodeScannerObserver, IPaymentDone
     {
         Ticket currentTicket;
         PremiumUser currentUser;

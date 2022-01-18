@@ -20,6 +20,7 @@ namespace ParkingApplication.ParkingSystem
         public void Realize()
         {
             isPaid = true;
+            entranceTime = DateTime.Now;
         }
     }
 }

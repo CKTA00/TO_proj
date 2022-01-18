@@ -8,6 +8,7 @@ using ParkingApplication.ParkingSystem;
 using ParkingApplication.Devices;
 using ParkingApplication.DeviceInterface;
 using ParkingApplication.Premium;
+using ParkingApplication.CashSystem;
 
 namespace ParkingApplication
 {
@@ -22,23 +23,21 @@ namespace ParkingApplication
         IScannerAPI scanner;
         IPremiumCardAPI cardReaader;
         IStandardButtonsAPI buttons;
+        ICashMachineOutput cashOutput;
 
         // database:
         TicketDatabase normalTicketDB;
         TicketDatabase handicappedTicketDB;
         PremiumDatabase premiumDatabase;
 
-        // device containers: // TODO: Move somewhere else
-        List<EntranceParkingDevice> entanceDevices;
-        List<ExitParkingDevice> exitDevices;
-        //TODO: lists of devices of each type
-
-        internal ISimpleDialog Ui { get => dialog; set => dialog = value; }
+        internal ISimpleDialog Dialog { get => dialog; set => dialog = value; }
         internal IGateAPI Gate { get => gate; set => gate = value; }
         internal IPrinterAPI TicketPrinter { get => ticketPrinter; set => ticketPrinter = value; }
         internal IScannerAPI Scanner { get => scanner; set => scanner = value; }
         internal IPremiumCardAPI CardReaader { get => cardReaader; set => cardReaader = value; }
         internal IStandardButtonsAPI Buttons { get => buttons; set => buttons = value; }
+        internal ICashMachineOutput CashOutput { get => cashOutput; set => cashOutput = value; }
+
         internal TicketDatabase NormalTicketDB { get => normalTicketDB; set => normalTicketDB = value; }
         internal TicketDatabase HandicappedTicketDB { get => handicappedTicketDB; set => handicappedTicketDB = value; }
         internal PremiumDatabase PremiumDatabase { get => premiumDatabase; set => premiumDatabase = value; }
@@ -55,34 +54,33 @@ namespace ParkingApplication
             return instance;
         }
 
-        public void Run()
+        internal EntranceParkingDevice BuildEntranceParkingDevice()
         {
-            entanceDevices = new List<EntranceParkingDevice>();
-            entanceDevices.Add(new EntranceParkingDevice(dialog,gate,ticketPrinter,normalTicketDB,handicappedTicketDB,premiumDatabase));
-            foreach(EntranceParkingDevice o in entanceDevices)
-            {
-                buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, o);
-                buttons.AddButtonObserver(ButtonKey.SPECIAL_BUTTON, o);
-                cardReaader.AddPremiumCardObserver(o);
-            }
-
-            exitDevices = new List<ExitParkingDevice>();
-            exitDevices.Add(new ExitParkingDevice(dialog, gate, normalTicketDB, handicappedTicketDB, premiumDatabase));
-            foreach (ExitParkingDevice o in exitDevices)
-            {
-                //buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, o);
-                //buttons.AddButtonObserver(ButtonKey.SPECIAL_BUTTON, o);
-                scanner.AddScannerObserver(o);
-            }
-
-            
-            // TODO: maybe run each device on its own thread?
-            //entanceDevices[0].Main();
+            EntranceParkingDevice ret = new EntranceParkingDevice(dialog, gate, ticketPrinter, normalTicketDB, handicappedTicketDB, premiumDatabase);
+            buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, ret);
+            buttons.AddButtonObserver(ButtonKey.SPECIAL_BUTTON, ret);
+            cardReaader.AddPremiumCardObserver(ret);
+            return ret;
         }
 
-        public List<EntranceParkingDevice> GetEntranceDevices()
+        internal RegisterDevice BuildRegisterDevice()
         {
-            return entanceDevices;
+            CoinContainer bank = new CoinContainer(cashOutput);
+            RegisterDevice ret = new RegisterDevice(dialog, premiumDatabase, bank, new TicketPrices(), new PremiumPrices());
+            bank.SetContext(ret, dialog);
+            scanner.AddScannerObserver(ret);
+            cardReaader.AddPremiumCardObserver(ret);
+            buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, ret);
+            buttons.AddButtonObserver(ButtonKey.SPECIAL_BUTTON, ret);
+            buttons.AddButtonObserver(ButtonKey.CANCEL_BUTTON, ret);
+            return ret;
+        }
+
+        internal ExitParkingDevice BuildExitParkingDevice()
+        {
+            ExitParkingDevice ret = new ExitParkingDevice(dialog, gate, normalTicketDB, handicappedTicketDB, premiumDatabase);
+            scanner.AddScannerObserver(ret);
+            return ret;
         }
     }
 }

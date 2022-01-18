@@ -2,7 +2,7 @@
 
 namespace ParkingApplication.CashSystem
 {
-    class PremiumPrice : IPriceStrategy
+    class PremiumPrices : IPriceStrategy
     {
         public int CalculatePriceInGr(TimeSpan t)
         {

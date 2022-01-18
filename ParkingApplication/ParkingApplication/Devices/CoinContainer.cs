@@ -11,12 +11,13 @@ namespace ParkingApplication.Devices
     class CoinContainer : ICashMachineObserver
     {
         ISimpleDialog display;
+        IPaymentDone ctx;
         ICashMachineOutput cashOutput;
         Dictionary<AllowedDenominations, int> coins;
         Dictionary<AllowedDenominations, int> box;
         bool closeBox;
         int total;
-        public CoinContainer(IPaymentDone ctx, ISimpleDialog display, ICashMachineOutput cashBox, int initialCoins=100)
+        public CoinContainer(ICashMachineOutput cashBox, int initialCoins=100)
         {
             this.cashOutput = cashBox;
             closeBox = false;
@@ -25,6 +26,12 @@ namespace ParkingApplication.Devices
                 coins.Add(den, initialCoins);
                 box.Add(den, 0);
             }
+        }
+
+        public void SetContext(IPaymentDone ctx, ISimpleDialog display)
+        {
+            this.display = display;
+            this.ctx = ctx;
         }
 
         public void InsertCoin(AllowedDenominations denomination)
@@ -97,6 +104,7 @@ namespace ParkingApplication.Devices
                 }
             }
             display.ShowMessage("Reszta została wypłacona"); //move to Device
+
         }
 
         public void RequestValue(int totalInGr)
