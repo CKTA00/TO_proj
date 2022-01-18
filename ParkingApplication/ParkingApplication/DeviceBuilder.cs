@@ -11,9 +11,9 @@ using ParkingApplication.Premium;
 
 namespace ParkingApplication
 {
-    class DeviceFactory
+    class DeviceBuilder
     {
-        private static DeviceFactory instance;
+        private static DeviceBuilder instance;
 
         // devices parts:
         ISimpleDialog dialog;
@@ -43,15 +43,15 @@ namespace ParkingApplication
         internal TicketDatabase HandicappedTicketDB { get => handicappedTicketDB; set => handicappedTicketDB = value; }
         internal PremiumDatabase PremiumDatabase { get => premiumDatabase; set => premiumDatabase = value; }
 
-        private DeviceFactory()
+        private DeviceBuilder()
         {
             
         }
 
-        public static DeviceFactory GetInstance()
+        public static DeviceBuilder GetInstance()
         {
             if (instance == null)
-                instance = new DeviceFactory();
+                instance = new DeviceBuilder();
             return instance;
         }
 

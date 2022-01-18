@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ParkingApplication.DeviceInterface
 {
-    interface ICashMachineObserver
+    public interface ICashMachineObserver
     {
         void InsertCoin(AllowedDenominations denomination);
         //void PayByDebitCard(string debitCardData, int valuePLN, int valueGR);

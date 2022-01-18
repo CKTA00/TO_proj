@@ -1,6 +1,6 @@
 ﻿namespace ParkingApplication.CashSystem
 {
-    enum AllowedDenominations //dictionary probably would work better
+    public enum AllowedDenominations //dictionary probably would work better
     {
         M10gr = 10,
         M20gr = 20,

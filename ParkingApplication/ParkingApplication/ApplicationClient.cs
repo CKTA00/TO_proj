@@ -16,7 +16,7 @@ namespace ParkingApplication
         static ConsoleMachineAPI machine;
         static ICodeGenerator generator;
         static ISimpleDialog con;
-        static DeviceFactory app;
+        static DeviceBuilder builder;
         static TicketDatabase normalTicketDB;
         static TicketDatabase handicappedTicketDB;
         static void Main(string[] args)
@@ -29,17 +29,17 @@ namespace ParkingApplication
             handicappedTicketDB = new TicketDatabase(generator, 5);
             PremiumDatabase premiumDatabase = new PremiumDatabase(generator);
 
-            app = DeviceFactory.GetInstance();
-            app.Buttons = machine;
-            app.CardReaader = machine;
-            app.Gate = machine;
-            app.HandicappedTicketDB = handicappedTicketDB;
-            app.NormalTicketDB = normalTicketDB;
-            app.PremiumDatabase = premiumDatabase;
-            app.Scanner = machine;
-            app.TicketPrinter = machine;
-            app.Ui = machine;
-            app.Run();
+            builder = DeviceBuilder.GetInstance();
+            builder.Buttons = machine;
+            builder.CardReaader = machine;
+            builder.Gate = machine;
+            builder.HandicappedTicketDB = handicappedTicketDB;
+            builder.NormalTicketDB = normalTicketDB;
+            builder.PremiumDatabase = premiumDatabase;
+            builder.Scanner = machine;
+            builder.TicketPrinter = machine;
+            builder.Ui = machine;
+            builder.Run();
 
             ShowSimulationMenu();
         }
@@ -85,7 +85,7 @@ namespace ParkingApplication
 
         static void DriveIn()
         {
-            EntranceParkingDevice device = app.GetEntranceDevices()[0];
+            EntranceParkingDevice device = builder.GetEntranceDevices()[0];
             device.Main();
 
             while (true)

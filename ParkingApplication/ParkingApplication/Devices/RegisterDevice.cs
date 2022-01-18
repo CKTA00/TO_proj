@@ -9,13 +9,24 @@ using ParkingApplication.Premium;
 
 namespace ParkingApplication.Devices
 {
-    class RegisterDevice : Device
+    class RegisterDevice : Device, IPaymentDone
     {
         Ticket currentTicket;
         PremiumUser currentUser;
+        CoinContainer bank;
+        IPriceStrategy ticketPrice;
+        IPriceStrategy premiumPrice;
 
-        public RegisterDevice(ISimpleDialog initDisplay, PremiumDatabase premiumDB) : base(initDisplay, premiumDB)
+        public RegisterDevice(ISimpleDialog initDisplay, PremiumDatabase premiumDB, CoinContainer bank, IPriceStrategy ticketPrice, IPriceStrategy premiumPrice) : base(initDisplay, premiumDB)
         {
+            this.ticketPrice = ticketPrice;
+            this.premiumPrice = premiumPrice;
+            this.bank = bank;
+        }
+
+        public override void Main()
+        {
+            display.ShowMessage("Witaj użytkowniku. Zeskanuj bilet aby zapłacić. Naciśnij accept aby wyrobić kartę stałego klienta. Naciśnij cancel jeśli zgubiłeś bilet.");
         }
 
         public override void ButtonPressed(ButtonKey key)
@@ -47,14 +58,29 @@ namespace ParkingApplication.Devices
             {
                 display.ShowMessage("Twoja karta straci ważność "+currentUser.ExpiryDate.ToString());
             }
-            display.ShowMessage("Kliknij ACCEPT .");
+            display.ShowMessage("Na ile miesięcy chcesz przedłużyć ważność: ");
+            int extend = 0;
+            if(!int.TryParse(display.ReadString(),out extend)){
+                display.ShowMessage("Proces nie udany, przybliż kartę jeszcze raz.");
+                currentUser = null;
+                return;
+            }
+            
         }
 
-        public override void Main()
+        public void PaymentDone()
         {
-            display.ShowMessage("Witaj użytkowniku. Zeskanuj bilet aby zapłacić. Naciśnij accept aby wyrobić kartę stałego klienta. Naciśnij cancel jeśli zgubiłeś bilet.");
+            if (currentUser != null)
+            {
+                display.ShowMessage("Dziękujemy za zakup premium!");
+                currentUser = null;
+            }
+            else if(currentTicket != null)
+            {
+                currentTicket.Realize();
+                currentTicket = null;
+                display.ShowMessage("Udaj się do bramy wyjazdowej w przeciągu 15 minut. Zaskanuj tam swój bilet.");
+            }
         }
-
-        
     }
 }

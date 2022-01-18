@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParkingApplication.DeviceInterface
+namespace ParkingApplication.Devices
 {
-    public interface ICodeScannerObserver
+    interface IPaymentDone
     {
-        void CodeScanned(string code);
+        void PaymentDone();
     }
 }

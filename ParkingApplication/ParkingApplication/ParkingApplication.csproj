@@ -43,16 +43,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeviceFactory.cs" />
+    <Compile Include="DeviceBuilder.cs" />
     <Compile Include="CashSystem\AllowedDenominations.cs" />
     <Compile Include="CashSystem\Denomination.cs" />
+    <Compile Include="DeviceInterface\ICashMachineAPI.cs" />
+    <Compile Include="DeviceInterface\ICashMachineOutput.cs" />
     <Compile Include="DeviceInterface\ICodeScannerObserver.cs" />
     <Compile Include="DeviceInterface\IPremiumCardAPI.cs" />
     <Compile Include="DeviceInterface\IPremiumCardObserver.cs" />
     <Compile Include="DeviceInterface\IScannerAPI.cs" />
     <Compile Include="DeviceInterface\IStandardButtonsAPI.cs" />
+    <Compile Include="Devices\CoinContainer.cs" />
     <Compile Include="Devices\ExitParkingDevice.cs" />
     <Compile Include="Devices\GateDevice.cs" />
+    <Compile Include="Devices\IPaymentDone.cs" />
+    <Compile Include="Devices\IPriceStrategy.cs" />
+    <Compile Include="Devices\NoMoneyInBankException.cs" />
+    <Compile Include="Devices\RegisterDevice.cs" />
     <Compile Include="Premium\InvalidPremiumUserCodeException.cs" />
     <Compile Include="Premium\PremiumCurrentlyUsedException.cs" />
     <Compile Include="Util\GUIDGenerator.cs" />
@@ -63,7 +70,7 @@
     <Compile Include="ParkingSystem\TicketDatabase.cs" />
     <Compile Include="DeviceInterface\ButtonKey.cs" />
     <Compile Include="DeviceInterface\ConsoleDisplay.cs" />
-    <Compile Include="DeviceInterface\ICashMachineAPI.cs" />
+    <Compile Include="DeviceInterface\ICashMachineObserver.cs" />
     <Compile Include="DeviceInterface\IGateAPI.cs" />
     <Compile Include="DeviceInterface\IPrinterAPI.cs" />
     <Compile Include="DeviceInterface\ISimpleDialog.cs" />

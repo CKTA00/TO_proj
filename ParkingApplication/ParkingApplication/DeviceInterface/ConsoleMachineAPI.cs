@@ -9,7 +9,7 @@ using ParkingApplication.ParkingSystem;
 
 namespace ParkingApplication.DeviceInterface
 {
-    class ConsoleMachineAPI : ISimpleDialog, IGateAPI, IPrinterAPI, ICashMachineAPI, IStandardButtonsAPI, IScannerAPI, IPremiumCardAPI, ICashMachineAPI
+    class ConsoleMachineAPI : ISimpleDialog, IGateAPI, IPrinterAPI, ICashMachineAPI, IStandardButtonsAPI, IScannerAPI, IPremiumCardAPI, ICashMachineOutput
     {
         ConsoleDisplay con;
         Dictionary<ButtonKey, List<IButtonObserver>> buttonObservers;
@@ -165,6 +165,36 @@ namespace ParkingApplication.DeviceInterface
         public void InsertCoin(AllowedDenominations den, ICashMachineObserver o)
         {
             if (cashObservers.Contains(o)) o.InsertCoin(den);
+        }
+
+        public void ThrowCoin(AllowedDenominations den)
+        {
+            string coinName;
+            int v = (int)den;
+            if(v >= 100)
+            {
+                coinName = v / 100 + " zł";
+            }
+            else
+            {
+                coinName = v + " gr";
+            }
+            con.ShowMessage("Z automatu wypadła moneta "+coinName);
+        }
+
+        public void ThrowCoins(AllowedDenominations den, int amount)
+        {
+            string coinName;
+            int v = (int)den;
+            if (v >= 100)
+            {
+                coinName = v / 100 + " zł";
+            }
+            else
+            {
+                coinName = v + " gr";
+            }
+            con.ShowMessage("Z automatu wypadło "+amount+" monet " + coinName);
         }
     }
 }
