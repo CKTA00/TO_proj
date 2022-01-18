@@ -64,7 +64,8 @@ namespace ParkingApplication.Devices
             if (value < 0)
             {
                 display.ShowMessage("Reszta: " + -value / 100 + " zł " + -value % 100 + " gr");
-                foreach(AllowedDenominations den in box.Keys)
+                List<AllowedDenominations> denoms = box.Keys.ToList<AllowedDenominations>();
+                foreach (AllowedDenominations den in denoms)
                 {
                     coins[den] += box[den];
                     box[den] = 0;
@@ -81,8 +82,9 @@ namespace ParkingApplication.Devices
 
         private void Rest(int value)
         {
-            List<AllowedDenominations> denoms = new List<AllowedDenominations>(coins.Keys);
+            List<AllowedDenominations> denoms = box.Keys.ToList<AllowedDenominations>();
             denoms.Sort();
+            denoms.Reverse();
 
             foreach (AllowedDenominations den in denoms)
             {
@@ -101,12 +103,13 @@ namespace ParkingApplication.Devices
                 }
                 
                 if (value == 0) break;
-                if(den == AllowedDenominations.M10gr && value > 0)//move outside the loop
+                if(den == AllowedDenominations.M10gr && value > 0)
                 {
                     throw new NoMoneyInBankException();
                 }
             }
-            display.ShowMessage("Reszta została wypłacona"); //move to Device
+            display.ShowMessage("Reszta została wypłacona");
+            ctx.PaymentDone();
         }
 
         public void RequestValue(int totalInGr)
@@ -119,7 +122,8 @@ namespace ParkingApplication.Devices
         public void CancelPayment()
         {
             closeBox = false;
-            foreach (AllowedDenominations den in box.Keys)
+            List<AllowedDenominations> denoms = box.Keys.ToList<AllowedDenominations>();
+            foreach (AllowedDenominations den in denoms)
             {
                 cashOutput.ThrowCoins(den, box[den]);
                 box[den] = 0;

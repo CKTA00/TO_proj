@@ -115,7 +115,7 @@ namespace ParkingApplication.Devices
                 TimeSpan timeLeft = ticket.PaymentTime - DateTime.Now + new TimeSpan(0, 15, 0);
                 if (timeLeft>TimeSpan.Zero)
                 {
-                    display.ShowMessage("Ten bilet jest już opłacony. Zostało ci " + timeLeft.TotalMinutes + " na wyjazd.");
+                    display.ShowMessage("Ten bilet jest już opłacony. Zostało ci " + (int)timeLeft.TotalMinutes + " minut na wyjazd.");
                     return;
                 }
                 else

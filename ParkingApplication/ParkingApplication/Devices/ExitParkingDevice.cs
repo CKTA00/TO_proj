@@ -52,9 +52,10 @@ namespace ParkingApplication.Devices
                 return;
             }
            
-            if (ticket.PaymentTime.AddMinutes(15) > DateTime.Now)
+            if (ticket.PaymentTime.AddMinutes(15) < DateTime.Now)
             {
                 display.ShowMessage("Wykryto postój dłuższy niż zapłacono. Wróć się do automatu i zapłać za dodatkowy czas.");
+                ticket.Underpaid();
                 return;
             }
 

@@ -24,6 +24,7 @@ namespace ParkingApplication
         IPremiumCardAPI cardReaader;
         IStandardButtonsAPI buttons;
         ICashMachineOutput cashOutput;
+        ICashMachineAPI cashMachine;
 
         // database:
         TicketDatabase normalTicketDB;
@@ -37,6 +38,7 @@ namespace ParkingApplication
         internal IPremiumCardAPI CardReaader { get => cardReaader; set => cardReaader = value; }
         internal IStandardButtonsAPI Buttons { get => buttons; set => buttons = value; }
         internal ICashMachineOutput CashOutput { get => cashOutput; set => cashOutput = value; }
+        internal ICashMachineAPI CashMachine { get => cashMachine; set => cashMachine = value; }
 
         internal TicketDatabase NormalTicketDB { get => normalTicketDB; set => normalTicketDB = value; }
         internal TicketDatabase HandicappedTicketDB { get => handicappedTicketDB; set => handicappedTicketDB = value; }
@@ -68,6 +70,7 @@ namespace ParkingApplication
             CoinContainer bank = new CoinContainer(cashOutput);
             RegisterDevice ret = new RegisterDevice(dialog, normalTicketDB, handicappedTicketDB, premiumDatabase, bank, new TicketPrices(), new PremiumPrices());
             bank.SetContext(ret, dialog);
+            cashMachine.AddCashMachineObserver(bank);
             scanner.AddScannerObserver(ret);
             cardReaader.AddPremiumCardObserver(ret);
             buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, ret);

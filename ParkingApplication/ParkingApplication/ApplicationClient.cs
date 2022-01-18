@@ -36,6 +36,8 @@ namespace ParkingApplication
             builder = DeviceBuilder.GetInstance();
             builder.Buttons = machine;
             builder.CardReaader = machine;
+            builder.CashMachine = machine;
+            builder.CashOutput = machine;
             builder.Gate = machine;
             builder.HandicappedTicketDB = handicappedTicketDB;
             builder.NormalTicketDB = normalTicketDB;
@@ -180,7 +182,7 @@ namespace ParkingApplication
                 con.ShowMessage("\tPrzyłóż kartę.");
                 con.ShowMessage(">scan");
                 con.ShowMessage("\tZeskanuj bilet.");
-                con.ShowMessage(">scan");
+                con.ShowMessage(">insert");
                 con.ShowMessage("\tWpłać pieniądze.");
                 con.ShowMessage(">exit");
                 con.ShowMessage("\tZawróć.");
@@ -249,6 +251,7 @@ namespace ParkingApplication
                         IncorrectCommand();
                         continue;
                 }
+                con.ShowMessage("Wrzuciłeś monete...");
                 machine.InsertCoin(coin,device);
             }
             
