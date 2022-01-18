@@ -54,6 +54,7 @@
     <Compile Include="Devices\ExitParkingDevice.cs" />
     <Compile Include="Devices\GateDevice.cs" />
     <Compile Include="Premium\InvalidPremiumUserCodeException.cs" />
+    <Compile Include="Premium\PremiumCurrentlyUsedException.cs" />
     <Compile Include="Util\GUIDGenerator.cs" />
     <Compile Include="Util\ICodeGenerator.cs" />
     <Compile Include="ParkingSystem\InvalidTicketCodeException.cs" />

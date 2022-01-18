@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ParkingApplication.ParkingSystem;
 using ParkingApplication.Util;
+using ParkingApplication.Premium;
 
 namespace ParkingApplication
 {
@@ -26,6 +27,7 @@ namespace ParkingApplication
 
             normalTicketDB = new TicketDatabase(generator, 40);
             handicappedTicketDB = new TicketDatabase(generator, 5);
+            PremiumDatabase premiumDatabase = new PremiumDatabase(generator);
 
             app = DeviceFactory.GetInstance();
             app.Buttons = machine;
@@ -33,6 +35,7 @@ namespace ParkingApplication
             app.Gate = machine;
             app.HandicappedTicketDB = handicappedTicketDB;
             app.NormalTicketDB = normalTicketDB;
+            app.PremiumDatabase = premiumDatabase;
             app.Scanner = machine;
             app.TicketPrinter = machine;
             app.Ui = machine;
@@ -87,20 +90,22 @@ namespace ParkingApplication
 
             while (true)
             {
-                con.ShowMessage(">press");
-                con.ShowMessage("\tNaciśnij.");
+                con.ShowMessage(">press accept");
+                con.ShowMessage("\tNaciśnij główny przycisk.");
+                con.ShowMessage(">press special");
+                con.ShowMessage("\tNaciśnij przycisk specialny (z ikoną człowieka na wózku).");
                 con.ShowMessage(">card");
                 con.ShowMessage("\tPrzyłóż kartę.");
                 con.ShowMessage(">exit");
                 con.ShowMessage("\tZawróć.");
                 string command = con.ReadString();
-                if (command == "press")
+                if (command == "press accept")
                 {
                     machine.AnnounceButtonPressed(ButtonKey.ACCEPT_BUTTON, device);
-                    con.ShowMessage("Zaparkowałeś!");
-                    con.ShowMessage("");
-                    con.ShowMessage("");
-                    break;
+                }
+                else if (command == "press special")
+                {
+                    machine.AnnounceButtonPressed(ButtonKey.SPECIAL_BUTTON, device);
                 }
                 else if (command == "card")
                 {

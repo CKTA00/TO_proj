@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ParkingApplication.ParkingSystem;
 using ParkingApplication.Devices;
 using ParkingApplication.DeviceInterface;
+using ParkingApplication.Premium;
 
 namespace ParkingApplication
 {
@@ -25,7 +26,7 @@ namespace ParkingApplication
         // database:
         TicketDatabase normalTicketDB;
         TicketDatabase handicappedTicketDB;
-        //TODO: premium database
+        PremiumDatabase premiumDatabase;
 
         // device containers: // TODO: Move somewhere else
         List<EntranceParkingDevice> entanceDevices;
@@ -40,6 +41,7 @@ namespace ParkingApplication
         internal IStandardButtonsAPI Buttons { get => buttons; set => buttons = value; }
         internal TicketDatabase NormalTicketDB { get => normalTicketDB; set => normalTicketDB = value; }
         internal TicketDatabase HandicappedTicketDB { get => handicappedTicketDB; set => handicappedTicketDB = value; }
+        internal PremiumDatabase PremiumDatabase { get => premiumDatabase; set => premiumDatabase = value; }
 
         private DeviceFactory()
         {
@@ -56,15 +58,16 @@ namespace ParkingApplication
         public void Run()
         {
             entanceDevices = new List<EntranceParkingDevice>();
-            entanceDevices.Add(new EntranceParkingDevice(dialog,gate,ticketPrinter,normalTicketDB,handicappedTicketDB));
+            entanceDevices.Add(new EntranceParkingDevice(dialog,gate,ticketPrinter,normalTicketDB,handicappedTicketDB,premiumDatabase));
             foreach(EntranceParkingDevice o in entanceDevices)
             {
                 buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, o);
                 buttons.AddButtonObserver(ButtonKey.SPECIAL_BUTTON, o);
+                cardReaader.AddPremiumCardObserver(o);
             }
 
             exitDevices = new List<ExitParkingDevice>();
-            exitDevices.Add(new ExitParkingDevice(dialog, gate, normalTicketDB, handicappedTicketDB));
+            exitDevices.Add(new ExitParkingDevice(dialog, gate, normalTicketDB, handicappedTicketDB, premiumDatabase));
             foreach (ExitParkingDevice o in exitDevices)
             {
                 //buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, o);

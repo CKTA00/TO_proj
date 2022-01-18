@@ -27,22 +27,32 @@ namespace ParkingApplication.Premium
 
         public PremiumUser RegisterPremiumUser(string plateNumber)
         {
-            PremiumUser u = new PremiumUser(generator.Generate(), DateTime.Now);
-            u.RegistrationPlate = plateNumber;
-            premiumUsers.Add(plateNumber, u);
+            string code = generator.Generate();
+            PremiumUser u = new PremiumUser(code, DateTime.Now, plateNumber);
+            premiumUsers.Add(code, u);
             return u;
         }
 
         public PremiumUser GetPremiumUser(string plateNumber, string code)
         {
-            if(premiumUsers.ContainsKey(plateNumber) && premiumUsers[plateNumber].Code == code)
+            if(premiumUsers.ContainsKey(code) && premiumUsers[code].RegistrationPlate == plateNumber)
             {
-                return premiumUsers[plateNumber];
+                return premiumUsers[code];
             }
             else
             {
                 throw new InvalidPremiumUserCodeException();
             }
+        }
+
+        public PremiumUser FindUserByCode(string code) // TODO: bool?
+        {
+            if(premiumUsers.ContainsKey(code))
+            {
+                return premiumUsers[code];
+            }
+
+            throw new InvalidPremiumUserCodeException();
         }
     }
 }

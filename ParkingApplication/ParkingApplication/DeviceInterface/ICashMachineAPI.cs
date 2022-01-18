@@ -9,7 +9,8 @@ namespace ParkingApplication.DeviceInterface
 {
     interface ICashMachineAPI
     {
-        void InsertCoin(AllowedDenominations denomination);
-        void PayByDebitCard(string debitCardData, int valuePLN, int valueGR);
+        void AddCashMachineObserver(ICashMachineObserver o);
+        void RemoveCashMachineObserver(ICashMachineObserver o);
+        void InsertCoin(AllowedDenominations den, ICashMachineObserver o);
     }
 }

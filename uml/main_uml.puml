@@ -64,6 +64,14 @@ package "DeviceInterface"{
         +ReadString(): string
     }
 
+    interface ICashMachineAPI
+    {
+       +AddCashMachineObserver(ICashMachineObserver o): void
+       +RemoveCashMachineObserver(ICashMachineObserver o): void
+       +AnnounceCoinAll(AllowedDenominations den): void
+       +AnnounceSwipe(AllowedDenominations den,ICashMachineObserver o): void
+    }
+
     class ConsoleDisplay<<Singleton>> implements ISimpleDialog{
         -{static}instance: ConsoleDisplay
         +{static}GetInstance(): ConsoleDisplay
@@ -87,6 +95,7 @@ package "DeviceInterface"{
     IStandardButtonsAPI o--"list for each\nbutton type" IButtonObserver
     IPremiumCardAPI o-- IPremiumCardObserver
     IScannerAPI o-- IScannerObserver
+    ICashMachineAPI o-- ICashMachineObserver
 
     enum ButtonKey{
         ACCEPT_BUTTON
@@ -111,16 +120,17 @@ package "DeviceInterface"{
         +CardSwiped(ButtonKey key): void
     }
 
+    interface ICashMachineObserver
+    {
+        +InsertCoin(AllowedDenominations denomination): void
+    }
+
     ConsoleMachineAPI o--> ConsoleDisplay
     ApplicationClient --> ISimpleDialog: use console
     ApplicationClient -> ConsoleMachineAPI: simulate usecase
 
     package "PaymentSystem"{
-       interface ICashMachineAPI
-       {
-           +InsertCoin(AllowedDenominations denomination): void
-           +PayByDebitCard(string debitCardData, int valuePLN, int valueGR): bool
-       }
+
 
        class Denomination
        {

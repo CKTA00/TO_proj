@@ -9,12 +9,13 @@ using ParkingApplication.ParkingSystem;
 
 namespace ParkingApplication.DeviceInterface
 {
-    class ConsoleMachineAPI : ISimpleDialog, IGateAPI, IPrinterAPI, ICashMachineAPI, IStandardButtonsAPI, IScannerAPI, IPremiumCardAPI 
+    class ConsoleMachineAPI : ISimpleDialog, IGateAPI, IPrinterAPI, ICashMachineAPI, IStandardButtonsAPI, IScannerAPI, IPremiumCardAPI, ICashMachineAPI
     {
         ConsoleDisplay con;
         Dictionary<ButtonKey, List<IButtonObserver>> buttonObservers;
         List<IPremiumCardObserver> cardObservers;
         List<ICodeScannerObserver> scanerObservers;
+        List<ICashMachineObserver> cashObservers;
 
         public ConsoleMachineAPI()
         {
@@ -29,6 +30,7 @@ namespace ParkingApplication.DeviceInterface
             buttonObservers.Add(ButtonKey.SPECIAL_BUTTON, new List<IButtonObserver>());
             cardObservers = new List<IPremiumCardObserver>();
             scanerObservers = new List<ICodeScannerObserver>();
+            cashObservers = new List<ICashMachineObserver>();
         }
 
         public void OpenGate()
@@ -148,6 +150,21 @@ namespace ParkingApplication.DeviceInterface
         public void AnnounceSwipe(string data, IPremiumCardObserver observer)
         {
             if (cardObservers.Contains(observer)) observer.CardSwiped(data);
+        }
+
+        public void AddCashMachineObserver(ICashMachineObserver o)
+        {
+            cashObservers.Add(o);
+        }
+
+        public void RemoveCashMachineObserver(ICashMachineObserver o)
+        {
+            cashObservers.Remove(o);
+        }
+
+        public void InsertCoin(AllowedDenominations den, ICashMachineObserver o)
+        {
+            if (cashObservers.Contains(o)) o.InsertCoin(den);
         }
     }
 }

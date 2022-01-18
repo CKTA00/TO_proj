@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using ParkingApplication.ParkingSystem;
 using ParkingApplication.DeviceInterface;
+using ParkingApplication.Premium;
 
 namespace ParkingApplication.Devices
 {
     class ExitParkingDevice : GateDevice, ICodeScannerObserver
     {
-        public ExitParkingDevice(ISimpleDialog initDisplay, IGateAPI machine, TicketDatabase normalTicketsDB, TicketDatabase handicappedTicketsDB) 
-            : base(initDisplay, machine, normalTicketsDB, handicappedTicketsDB)
+        public ExitParkingDevice(ISimpleDialog initDisplay, IGateAPI machine, TicketDatabase normalTicketsDB, TicketDatabase handicappedTicketsDB, PremiumDatabase premiumDB) 
+            : base(initDisplay, machine, normalTicketsDB, handicappedTicketsDB, premiumDB)
         {
 
         }

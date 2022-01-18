@@ -6,7 +6,7 @@ namespace ParkingApplication.Premium
     [Serializable]
     internal class InvalidPremiumUserCodeException : Exception
     {
-        public InvalidPremiumUserCodeException() : base("Cannot fin user in database")
+        public InvalidPremiumUserCodeException() : base("Cannot find user in database")
         {
         }
     }
