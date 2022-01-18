@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ParkingApplication.CashSystem;
 using ParkingApplication.DeviceInterface;
 using ParkingApplication.ParkingSystem;
 using ParkingApplication.Premium;
@@ -65,7 +62,6 @@ namespace ParkingApplication.Devices
                 currentUser = null;
                 return;
             }
-            
         }
 
         public void PaymentDone()
