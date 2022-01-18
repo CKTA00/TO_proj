@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CashSystem\PremiumPrices.cs" />
+    <Compile Include="CashSystem\TicketPrices.cs" />
     <Compile Include="DeviceBuilder.cs" />
     <Compile Include="CashSystem\AllowedDenominations.cs" />
     <Compile Include="CashSystem\Denomination.cs" />
@@ -57,7 +59,7 @@
     <Compile Include="Devices\ExitParkingDevice.cs" />
     <Compile Include="Devices\GateDevice.cs" />
     <Compile Include="Devices\IPaymentDone.cs" />
-    <Compile Include="Devices\IPriceStrategy.cs" />
+    <Compile Include="CashSystem\IPriceStrategy.cs" />
     <Compile Include="Devices\NoMoneyInBankException.cs" />
     <Compile Include="Devices\RegisterDevice.cs" />
     <Compile Include="Premium\InvalidPremiumUserCodeException.cs" />

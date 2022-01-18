@@ -66,7 +66,7 @@ namespace ParkingApplication
         internal RegisterDevice BuildRegisterDevice()
         {
             CoinContainer bank = new CoinContainer(cashOutput);
-            RegisterDevice ret = new RegisterDevice(dialog, premiumDatabase, bank, new TicketPrices(), new PremiumPrices());
+            RegisterDevice ret = new RegisterDevice(dialog, normalTicketDB, handicappedTicketDB, premiumDatabase, bank, new TicketPrices(), new PremiumPrices());
             bank.SetContext(ret, dialog);
             scanner.AddScannerObserver(ret);
             cardReaader.AddPremiumCardObserver(ret);

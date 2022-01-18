@@ -13,7 +13,7 @@ namespace ParkingApplication.Devices
         PremiumUser tempUser;
 
         public EntranceParkingDevice(ISimpleDialog display, IGateAPI gate, IPrinterAPI ticketPrinter, TicketDatabase normalTicketsDB,TicketDatabase handicappedTicketsDB,PremiumDatabase premiumDB)
-            :base(display, gate, normalTicketsDB, handicappedTicketsDB,premiumDB)
+            :base(display, gate, normalTicketsDB, handicappedTicketsDB, premiumDB)
         {
             this.ticketPrinter = ticketPrinter;
         }

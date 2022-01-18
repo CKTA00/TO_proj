@@ -7,8 +7,11 @@ namespace ParkingApplication.ParkingSystem
         private string code;
         private DateTime entranceTime;
         private bool isPaid;
+        private DateTime paymentTime;
+
         public string Code { get => code; }
         public DateTime EntranceTime { get => entranceTime; }
+        public DateTime PaymentTime { get => paymentTime; }
         public bool IsPaid { get => isPaid; }
 
         public Ticket(string code, DateTime entranceTime){
@@ -20,7 +23,13 @@ namespace ParkingApplication.ParkingSystem
         public void Realize()
         {
             isPaid = true;
-            entranceTime = DateTime.Now;
+            paymentTime = DateTime.Now;
+        }
+        
+        public void Underpaid()
+        {
+            isPaid = false;
+            entranceTime = paymentTime;
         }
     }
 }

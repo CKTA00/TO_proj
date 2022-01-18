@@ -11,15 +11,11 @@ namespace ParkingApplication.Devices
 {
     abstract class GateDevice : Device
     {
-        protected TicketDatabase normalTicketsDB;
-        protected TicketDatabase handicappedTicketsDB;
         protected IGateAPI gate;
         public GateDevice(ISimpleDialog initDisplay, IGateAPI gate,
             TicketDatabase normalTicketsDB, TicketDatabase handicappedTicketsDB, PremiumDatabase premiumDB)
-            : base(initDisplay, premiumDB)
+            : base(initDisplay, normalTicketsDB, handicappedTicketsDB, premiumDB)
         {
-            this.normalTicketsDB = normalTicketsDB;
-            this.handicappedTicketsDB = handicappedTicketsDB;
             this.gate = gate;
         }
     }

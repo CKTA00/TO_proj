@@ -19,6 +19,9 @@ namespace ParkingApplication.Devices
         int total;
         public CoinContainer(ICashMachineOutput cashBox, int initialCoins=100)
         {
+            coins = new Dictionary<AllowedDenominations, int>();
+            box = new Dictionary<AllowedDenominations, int>();
+
             this.cashOutput = cashBox;
             closeBox = false;
             foreach(AllowedDenominations den in (AllowedDenominations[]) Enum.GetValues(typeof(AllowedDenominations)))
@@ -104,7 +107,6 @@ namespace ParkingApplication.Devices
                 }
             }
             display.ShowMessage("Reszta została wypłacona"); //move to Device
-
         }
 
         public void RequestValue(int totalInGr)

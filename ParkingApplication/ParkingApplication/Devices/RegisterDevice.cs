@@ -14,7 +14,10 @@ namespace ParkingApplication.Devices
         IPriceStrategy ticketPrice;
         IPriceStrategy premiumPrice;
 
-        public RegisterDevice(ISimpleDialog initDisplay, PremiumDatabase premiumDB, CoinContainer bank, IPriceStrategy ticketPrice, IPriceStrategy premiumPrice) : base(initDisplay, premiumDB)
+        internal CoinContainer Bank { get => bank; }
+
+        public RegisterDevice(ISimpleDialog initDisplay, TicketDatabase normalDB, TicketDatabase handicappedDB, PremiumDatabase premiumDB, CoinContainer bank, IPriceStrategy ticketPrice, IPriceStrategy premiumPrice) 
+            : base(initDisplay, normalDB, handicappedDB, premiumDB)
         {
             this.ticketPrice = ticketPrice;
             this.premiumPrice = premiumPrice;
@@ -32,7 +35,11 @@ namespace ParkingApplication.Devices
             {
                 case ButtonKey.ACCEPT_BUTTON:
 
-                break;
+                    break;
+                case ButtonKey.CANCEL_BUTTON:
+                    bank.CancelPayment();
+                    display.ShowMessage("Płatnośc została anulowana.");
+                    break;
             }
         }
 
@@ -77,6 +84,47 @@ namespace ParkingApplication.Devices
                 currentTicket = null;
                 display.ShowMessage("Udaj się do bramy wyjazdowej w przeciągu 15 minut. Zaskanuj tam swój bilet.");
             }
+        }
+
+        public void CodeScanned(string code)
+        {
+            currentUser = null;
+            Ticket ticket;
+            TicketDatabase sourceDB;
+            try
+            {
+                ticket = normalTicketsDB.TryEvaluateTicket(code);
+                sourceDB = normalTicketsDB;
+            }
+            catch (InvalidTicketCodeException)
+            {
+                try
+                {
+                    ticket = handicappedTicketsDB.TryEvaluateTicket(code);
+                    sourceDB = handicappedTicketsDB;
+                }
+                catch (InvalidTicketCodeException e)
+                {
+                    display.ShowMessage("Twój bilet jest nieważny! e: " + e.Message);
+                    return;
+                }
+            }
+
+            if (ticket.IsPaid)
+            {
+                TimeSpan timeLeft = ticket.PaymentTime - DateTime.Now + new TimeSpan(0, 15, 0);
+                if (timeLeft>TimeSpan.Zero)
+                {
+                    display.ShowMessage("Ten bilet jest już opłacony. Zostało ci " + timeLeft.TotalMinutes + " na wyjazd.");
+                    return;
+                }
+                else
+                {
+                    ticket.Underpaid();
+                }
+            }
+            currentTicket = ticket;
+            bank.RequestValue(ticketPrice.CalculatePriceInGr(DateTime.Now - ticket.EntranceTime));
         }
     }
 }

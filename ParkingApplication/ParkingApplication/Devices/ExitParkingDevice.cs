@@ -26,17 +26,18 @@ namespace ParkingApplication.Devices
         public void CodeScanned(string code)
         {
             Ticket ticket;
+            TicketDatabase sourceDB;
             try
             {
                 ticket = normalTicketsDB.TryEvaluateTicket(code);
-                //db = normalTicketsDB;
+                sourceDB = normalTicketsDB;
             }
             catch(InvalidTicketCodeException)
             {
                 try
                 {
                     ticket = handicappedTicketsDB.TryEvaluateTicket(code);
-                    //db = handicappedTicketsDB;
+                    sourceDB = handicappedTicketsDB;
                 }
                 catch (InvalidTicketCodeException e)
                 {
@@ -45,13 +46,46 @@ namespace ParkingApplication.Devices
                 }        
             }
 
-            display.ShowMessage("Do zapłaty");
-            //TODO: get value of ticket from datetime (using Cash strategy directly?)
+            if(!ticket.IsPaid)
+            {
+                display.ShowMessage("Zapłać za swój bilet!");
+                return;
+            }
+           
+            if (ticket.PaymentTime.AddMinutes(15) > DateTime.Now)
+            {
+                display.ShowMessage("Wykryto postój dłuższy niż zapłacono. Wróć się do automatu i zapłać za dodatkowy czas.");
+                return;
+            }
+
+            sourceDB.DestroyTicket(ticket.Code);
+            display.ShowMessage("Dziękujemy!");
+            gate.OpenGate();
         }
 
         public override void CardSwiped(string code)
         {
-            throw new NotImplementedException();
+            display.ShowMessage("Odczytywanie danych z karty. Czekaj...");
+            PremiumUser u;
+            try
+            {
+                u = premiumDB.FindUserByCode(code);
+            }
+            catch (InvalidPremiumUserCodeException e)
+            {
+                display.ShowMessage("Nie znaleziono takiej karty w bazie danych e: " + e.Message);
+                return;
+            }
+
+            if (u.ExpiryDate > DateTime.Now)
+            {
+                display.ShowMessage("Ważność twojej karty wygasła! Doładuj ją w naszym automacie.");
+                return;
+            }
+
+            u.RemoveTicket();
+            display.ShowMessage("Dziękujemy!");
+            gate.OpenGate();
         }
 
         public override void ButtonPressed(ButtonKey key)
