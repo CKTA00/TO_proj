@@ -69,7 +69,7 @@ namespace ParkingApplication.Devices
                 return;
             }
 
-            if(u.ExpiryDate > DateTime.Now)
+            if(u.ExpiryDate <= DateTime.Now)
             {
                 display.ShowMessage("Ważność twojej karty wygasła! Doładuj ją w naszym automacie.");
                 return;

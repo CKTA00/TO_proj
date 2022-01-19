@@ -9,7 +9,7 @@ using ParkingApplication.ParkingSystem;
 
 namespace ParkingApplication.DeviceInterface
 {
-    class ConsoleMachineAPI : ISimpleDialog, IGateAPI, IPrinterAPI, ICashMachineAPI, IStandardButtonsAPI, IScannerAPI, IPremiumCardAPI, ICashMachineOutput
+    class ConsoleMachineAPI : ISimpleDialog, IGateAPI, IPrinterAPI, ICashMachineAPI, IStandardButtonsAPI, IScannerAPI, IPremiumCardAPI, ICashMachineOutput, IPremiumPrinter
     {
         ConsoleDisplay con;
         Dictionary<ButtonKey, List<IButtonObserver>> buttonObservers;
@@ -49,7 +49,7 @@ namespace ParkingApplication.DeviceInterface
 
         public void PrintTicket(Ticket ticket)
         {
-            con.ShowMessage("[Wysuwa bilet z kodem kreskowym " + ticket.Code + "]"); // TODO: replace with action function (not message)
+            con.ShowMessage("[Wysuwa bilet z kodem kreskowym " + ticket.Code + "]");
             ShowMessage("Zachowaj ten bilet do wyjazdu z parkingu.");
         }
 
@@ -130,8 +130,6 @@ namespace ParkingApplication.DeviceInterface
             if (scanerObservers.Contains(observer)) observer.CodeScanned(code);
         }
 
-        // PREMIUM CARD: implemented
-
         public void AddPremiumCardObserver(IPremiumCardObserver observer)
         {
             cardObservers.Add(observer);
@@ -195,6 +193,11 @@ namespace ParkingApplication.DeviceInterface
                 coinName = v + " gr";
             }
             con.ShowMessage("Z automatu wypadło "+amount+" monet " + coinName);
+        }
+
+        public void PrintPremiumCard(string code)
+        {
+            con.ShowMessage("[Wysuwa plastikową karte z maskiem magnetycznym i numerem " + code + "]");
         }
     }
 }

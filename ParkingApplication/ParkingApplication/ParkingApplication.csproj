@@ -53,6 +53,7 @@
     <Compile Include="DeviceInterface\ICodeScannerObserver.cs" />
     <Compile Include="DeviceInterface\IPremiumCardAPI.cs" />
     <Compile Include="DeviceInterface\IPremiumCardObserver.cs" />
+    <Compile Include="DeviceInterface\IPremiumPrinter.cs" />
     <Compile Include="DeviceInterface\IScannerAPI.cs" />
     <Compile Include="DeviceInterface\IStandardButtonsAPI.cs" />
     <Compile Include="Devices\CoinContainer.cs" />

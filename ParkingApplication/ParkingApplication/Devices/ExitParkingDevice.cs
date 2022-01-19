@@ -20,7 +20,7 @@ namespace ParkingApplication.Devices
         public override void Main()
         {
             display.ShowMessage("Zeskanuj kod kreskowy z biletu lub użyj karty stałego klienta.");
-            display.ShowMessage("Naciśnij przycisk aby wyjechać bez biletu (75 PLN).");
+            //display.ShowMessage("Naciśnij przycisk aby wyjechać bez biletu (75 PLN).");
         }
 
         public void CodeScanned(string code)
@@ -78,7 +78,7 @@ namespace ParkingApplication.Devices
                 return;
             }
 
-            if (u.ExpiryDate > DateTime.Now)
+            if (u.ExpiryDate <= DateTime.Now)
             {
                 display.ShowMessage("Ważność twojej karty wygasła! Doładuj ją w naszym automacie.");
                 return;

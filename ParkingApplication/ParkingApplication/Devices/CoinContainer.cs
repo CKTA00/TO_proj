@@ -61,7 +61,7 @@ namespace ParkingApplication.Devices
             }
             value = total - value;
 
-            if (value < 0)
+            if (value <= 0)
             {
                 display.ShowMessage("Reszta: " + -value / 100 + " zł " + -value % 100 + " gr");
                 List<AllowedDenominations> denoms = box.Keys.ToList<AllowedDenominations>();

@@ -28,7 +28,7 @@ namespace ParkingApplication.Premium
         public PremiumUser RegisterPremiumUser(string plateNumber)
         {
             string code = generator.Generate();
-            PremiumUser u = new PremiumUser(code, DateTime.Now, plateNumber);
+            PremiumUser u = new PremiumUser(code, DateTime.Now + new TimeSpan(90,0,0,0), plateNumber);
             premiumUsers.Add(code, u);
             return u;
         }

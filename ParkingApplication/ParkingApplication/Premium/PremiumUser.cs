@@ -6,19 +6,19 @@ namespace ParkingApplication.Premium
     class PremiumUser
     {
         private string code;
-        private DateTime expityDate;
+        private DateTime expiryDate;
         private string registrationPlate;
         private string currentTicketCode;
         private bool isHandicapped;
         public string Code { get => code; }
-        public DateTime ExpiryDate { get => expityDate; }
+        public DateTime ExpiryDate { get => expiryDate; }
         public string RegistrationPlate { get => registrationPlate; set => registrationPlate = value; }
         public bool IsHandicapped { get => isHandicapped; set => isHandicapped = value; }
 
-        public PremiumUser(string code, DateTime entranceTime, string registrationPlate)
+        public PremiumUser(string code, DateTime expiryTime, string registrationPlate)
         {
             this.code = code;
-            this.expityDate = entranceTime;
+            this.expiryDate = expiryTime;
             this.registrationPlate = registrationPlate;
             currentTicketCode = "";
         }
@@ -34,6 +34,11 @@ namespace ParkingApplication.Premium
         public void RemoveTicket()
         {
             currentTicketCode = "";
+        }
+
+        public void Extend(TimeSpan time)
+        {
+            expiryDate += time;
         }
     }
 }

@@ -83,6 +83,7 @@ namespace ParkingApplication
         {
             ExitParkingDevice ret = new ExitParkingDevice(dialog, gate, normalTicketDB, handicappedTicketDB, premiumDatabase);
             scanner.AddScannerObserver(ret);
+            cardReaader.AddPremiumCardObserver(ret);
             return ret;
         }
     }
