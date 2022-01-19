@@ -85,6 +85,8 @@ namespace ParkingApplication.Devices
             }
 
             u.RemoveTicket();
+            normalTicketsDB.DestroyTicket(code);
+            handicappedTicketsDB.DestroyTicket(code);
             display.ShowMessage("Dziękujemy!");
             gate.OpenGate();
         }

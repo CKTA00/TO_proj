@@ -31,9 +31,11 @@ namespace ParkingApplication.Premium
                 throw new PremiumCurrentlyUsedException();
         }
 
-        public void RemoveTicket()
+        public string RemoveTicket()
         {
+            string temp = currentTicketCode;
             currentTicketCode = "";
+            return temp;
         }
 
         public void Extend(TimeSpan time)

@@ -60,13 +60,14 @@ namespace ParkingApplication.ParkingSystem
 
         public void DestroyTicket(string code)
         {
+            counter--;
             if (tickets.ContainsKey(code))
             {
                 tickets.Remove(code);
             }
             else
             {
-                System.Console.WriteLine("TO NIE POWINNO SIĘ NIGDY WYŚWIETLIĆ");
+                //nothing
             }
         }
     }

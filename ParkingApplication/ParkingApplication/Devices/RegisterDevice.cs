@@ -16,6 +16,7 @@ namespace ParkingApplication.Devices
         string login;
         bool transaction;
         bool userRegister;
+        bool handicapped;
         int extend;
 
         internal CoinContainer Bank { get => bank; }
@@ -32,7 +33,7 @@ namespace ParkingApplication.Devices
 
         public override void Main()
         {
-            display.ShowMessage("Witaj użytkowniku. Zeskanuj bilet aby zapłacić. Naciśnij accept aby wyrobić kartę stałego klienta. Naciśnij cancel aby anulować transakcje.");
+            display.ShowMessage("Witaj użytkowniku. Zeskanuj bilet aby zapłacić. Naciśnij accept lub special aby wyrobić kartę stałego klienta (zwykła/dla niepełnosprawnych). Naciśnij cancel aby anulować transakcje.");
         }
 
         public override void ButtonPressed(ButtonKey key)
@@ -41,6 +42,12 @@ namespace ParkingApplication.Devices
             {
                 case ButtonKey.ACCEPT_BUTTON:
                     if (EndTransaction()) return;
+                    handicapped = false;
+                    RegisterNewUser();
+                    break;
+                case ButtonKey.SPECIAL_BUTTON:
+                    if (EndTransaction()) return;
+                    handicapped = true;
                     RegisterNewUser();
                     break;
                 case ButtonKey.CANCEL_BUTTON:
@@ -112,6 +119,7 @@ namespace ParkingApplication.Devices
             if (userRegister)
             {
                 PremiumUser u = premiumDB.RegisterPremiumUser(login);
+                u.IsHandicapped = handicapped;
                 display.ShowMessage("Dziękujemy za zakup premium! Oto twoja karta: "+u.Code);
             }
             else if(currentUser != null)

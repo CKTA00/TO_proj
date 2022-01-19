@@ -177,6 +177,8 @@ namespace ParkingApplication
                 con.ShowMessage("\n\n>press accept");
                 con.ShowMessage("\tNaciśnij główny przycisk.");
                 con.ShowMessage(">press cancel");
+                con.ShowMessage("\tNaciśnij przycisk z ikoną niepełnosprawnego człowieka.");
+                con.ShowMessage(">press cancel");
                 con.ShowMessage("\tNaciśnij anuluj.");
                 con.ShowMessage(">card");
                 con.ShowMessage("\tPrzyłóż kartę.");
@@ -190,6 +192,10 @@ namespace ParkingApplication
                 if (command == "press accept")
                 {
                     machine.AnnounceButtonPressed(ButtonKey.ACCEPT_BUTTON, device);
+                }
+                else if (command == "press special")
+                {
+                    machine.AnnounceButtonPressed(ButtonKey.SPECIAL_BUTTON, device);
                 }
                 else if (command == "press cancel")
                 {
