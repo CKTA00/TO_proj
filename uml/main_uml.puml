@@ -8,8 +8,9 @@ skinparam stereotypeCBackgroundColor<< Main >> Khaki
 
 class ApplicationClient<<Main>>
 {
-    -{static}con
-    -{static}app
+    -{static}entranceDevices: List<EntranceParkingMachine>
+    -{static}exitDevices: List<ExitParkingMachine>
+    -{static}registerDevices: List<RegisterDevice>
     -{static}Main()
     -{static}ShowSimulationMenu()
     -{static}DriveIn()
@@ -21,17 +22,27 @@ class ApplicationClient<<Main>>
 class DeviceFactory<<Singleton>>
 {
     -{static}instance: DeviceFactory
-    +entranceDevices: List<EntranceParkingMachine>
-    +exitDevices: List<ExitParkingMachine>
-    +registerDevices: List<RegisterDevice>
+
+    +dialog: ISimpleDialog
+    +gate: IGateAPI
+    +ticketPrinter: IPrinterAPI
+    +scanner: IScannerAPI
+    +cardReader: IPremiumCardAPI
+    +buttons: IStandardButtonsAPI
+    +cashOutput: ICashMachineOutput
+    +cashMachine: ICashMachineAPI
+
+    +normalTicketDB: ITicketDatabase
+    +handicappedTicketDB: ITicketDatabase
+    +premiumDatabase: IPremiumDatabase
     +{static}GetInstance(): DeviceFactory
     +Run(): void
-    +GetEntranceDevices(): List
-    +GetExitDevices(): List
-    +GetRegisterDevices(): List
+    +BuildEntranceDevice(): EntranceParkingMachine
+    +BuildExitDevices(): ExitParkingMachine
+    +BuildRegisterDevices(): RegisterDevice
 }
 
-ApplicationClient --> DeviceFactory: init
+ApplicationClient --> DeviceFactory: request build
 
 
 
@@ -128,82 +139,141 @@ package "DeviceInterface"{
     ConsoleMachineAPI o--> ConsoleDisplay
     ApplicationClient --> ISimpleDialog: use console
     ApplicationClient -> ConsoleMachineAPI: simulate usecase
-
-    package "PaymentSystem"{
-
-
-       class Denomination
-       {
-           -valueInGR: int
-           +amount: int
-       }
-
-       interface CashChangeStrategy
-       {
-
-       }
-
-       ICashMachineAPI o--> CashChangeStrategy
-       ICashMachineAPI *-- Denomination
-       Denomination . CashChangeStrategy
-    }
 }
+
+package "CashSystem"{
+    enum AllowedDenominations{
+        M10gr = 10,
+        M20gr = 20,
+        M50gr = 50,
+        M1pln = 100,
+        M2pln = 200,
+        M5pln = 500
+    }
+
+    interface IPriceStrategy{
+        +CalculatePriceInGr(TimeSpan t): int
+    }
+
+    class PremiumPrices implements IPriceStrategy
+    {
+
+    }
+
+    class TicketPrices implements IPriceStrategy
+    {
+
+    }
+
+}
+
+() "2"
+"2" --> IPriceStrategy
 
 
 package "Devices"<<logic of various devices>>{
 
     class Device <<Abstract>> implements IButtonObserver,IPremiumCardObserver{
-        - display: ISimpleDialog
-        - buttons: IStandardButtonsAPI
-        - cardReader: IPremiumCardAPI
+        #display: ISimpleDialog
+        #handicappedTicketsDB: ITicketDatabase
+        #premiumDB: IPremiumDatabase
 
         +{abstract}Main(): void
     }
 
-    class RegisterDevice extends Device
+    class RegisterDevice extends Device implements IPaymentDone
     {
-        #DisposeChange(Denomination coins): void
+        -currentTicket: Ticket
+        -currentUser: PremiumUser
+        -bank: CoinContainer
+        -ticketPrice: IPriceStrategy
+        -premiumPrice: IPriceStrategy
+        -login: string
+        -transaction: bool
+        -userRegister: bool
+        -handicapped: bool
+        -extend: int
+
+        +Bank(): CoinContainer
+        -EndTransaction(): void
+        -RegisterNewUser(): void
     }
+
+    RegisterDevice *-- "2"
 
     class GateDevice<<Abstract>> extends Device{
-        -gate: IGateAPI
-        +CheckCard()
-        #CloseIfClear()
+        #gate: IGateAPI
     }
 
-    class ExitParkingMachine extends GateDevice
+    class ExitParkingMachine extends GateDevice  implements IScannerObserver
     {
-        -ticketPrinter: IPrinterAPI
+
     }
 
-    class EntranceParkingMachine extends GateDevice implements IScannerObserver
+    class EntranceParkingMachine extends GateDevice
     {
-        -scanner: IScannerAPI
+        -ticketPrinter: IPrinterAPI;
+        -handicapPremiumNormalTicket: bool
+        -tempUser: PremiumUser
+        -AcceptButtonPressed(): void
+        -AddVirtualTicket(Ticket virtualTicket, PremiumUser user): void
+        -HandicapPremiumNormalTicket(): void
+        -SpecialButtonPressed(): void
     }
+
+    interface IPaymentDone{
+        +PaymentDone(): void
+    }
+
+    class CoinContainer implements ICashMachineObserver
+    {
+        -display: ISimpleDialog
+        -ctx: IPaymentDone
+        -cashOutput: ICashMachineOutput
+        -coins: Dictionary<AllowedDenominations, int>
+        -box: Dictionary<AllowedDenominations, int>
+        -closeBox: bool
+        total: int
+        +SetContext(IPaymentDone ctx, ISimpleDialog display)
+        +RequestValue(int totalInGr): void
+        +CancelPayment(): void
+        -Eval(): void
+        -Rest(int value): void
+    }
+
+    RegisterDevice *-->"1" CoinContainer
 }
 '"Devices"->"DeviceInterface": devices are\nusing various\ninterfaces
 
 
 package ParkingSystem{
 
-    class TicketDatabase{
+    interface ITicketDatabase{
         -counter: int
         -maxPlaces: int
         +TryAddTicket(): void
         +EvaluateTicket(string code):
     }
 
-    class Ticket<<immutable>>{
+    class TicketDatabase implements ITicketDatabase{
+    }
+
+
+    class Ticket{
         -code: string
         -entranceTime: DateTime
+        -paymentTime: DateTime
+        -isPaid: bool
         +Code.get(): string
-        +EntanceTime.get(): DateTime
+        +EntranceTime.get(): DateTime
+        +Realize(): void
+        +Underpaid(): void
+        +IsPaid(): bool
     }
-    note bottom: <b>flyweight pattern
 
 
 
-    TicketDatabase *-- Ticket
+    ITicketDatabase *--"n" Ticket
 
 
     ' ? class PremiumPlaces implements IPlaceCounter
@@ -224,32 +294,35 @@ package "Util"{
 
 }
 
-TicketDatabase --> ITicketCodeGenerator
-IPremiumDatabase --> ITicketCodeGenerator
+ITicketDatabase o--> ITicketCodeGenerator
+
 
 package Premium{
 
-    interface IPremiumDatabase
-    {
-        +Register(String driversPlate): void
-        +ExtendPremium(String driversPlate, DateTime extendTo): void
+
+    interface IPremiumDatabase{
+        -premiumUsers: Dictionary<string, PremiumUser>
+        +RegisterPremiumUser(string plateNumber): PremiumUser
+        +GetPremiumUser(string plateNumber, string code): PremiumUser
+        +FindUserByCode(string code): PremiumUser
+
     }
 
-    class PremiumProxy implements IPremiumDatabase{
+    class PremiumDatabase implements IPremiumDatabase
 
-    }
-    class PremiumDatabase implements IPremiumDatabase{
-    }
-
-    PremiumDatabase *-- PremiumUser
+    IPremiumDatabase *--"n"PremiumUser
     class PremiumUser{
         -code: string
         -expireDate: DateTime
-        -licencePlate: string
+        -currentTicketCode: string
+        +registrationPlate: string
+        +isHandicapped: bool
+        +AddTicket(Ticket ticket): void
+        +RemoveTicket(): string
+        +Extend(TimeSpan time): void
     }
 
-
-    PremiumProxy --> PremiumDatabase :uses
+    IPremiumDatabase o--> ITicketCodeGenerator
 }
 
 
@@ -257,14 +330,14 @@ package Premium{
 
 () " "
 
-DeviceFactory *-- " ": contains
+DeviceFactory ..> " ": creates
 Devices o--> " ": uses
-" " --> TicketDatabase
+" " --> ITicketDatabase
 " " --> IPremiumDatabase
 'RegisterDevice --> PremiumProxy: uses
 'GateDevice --> PremiumDatabase: usu
 
 
-DeviceFactory o-->"n" Device
+DeviceFactory ..>"creates" Device
 
 @enduml

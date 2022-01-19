@@ -42,7 +42,7 @@ namespace ParkingApplication.Premium
             }
         }
 
-        public PremiumUser FindUserByCode(string code) // TODO: bool?
+        public PremiumUser FindUserByCode(string code)
         {
             if(premiumUsers.ContainsKey(code))
             {

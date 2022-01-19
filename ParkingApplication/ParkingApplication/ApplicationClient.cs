@@ -31,7 +31,7 @@ namespace ParkingApplication
 
             builder = DeviceBuilder.GetInstance();
             builder.Buttons = machine;
-            builder.CardReaader = machine;
+            builder.CardReader = machine;
             builder.CashMachine = machine;
             builder.CashOutput = machine;
             builder.Gate = machine;

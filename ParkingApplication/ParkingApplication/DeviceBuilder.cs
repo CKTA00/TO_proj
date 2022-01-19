@@ -15,7 +15,7 @@ namespace ParkingApplication
         IGateAPI gate;
         IPrinterAPI ticketPrinter;
         IScannerAPI scanner;
-        IPremiumCardAPI cardReaader;
+        IPremiumCardAPI cardReader;
         IStandardButtonsAPI buttons;
         ICashMachineOutput cashOutput;
         ICashMachineAPI cashMachine;
@@ -29,7 +29,7 @@ namespace ParkingApplication
         internal IGateAPI Gate { get => gate; set => gate = value; }
         internal IPrinterAPI TicketPrinter { get => ticketPrinter; set => ticketPrinter = value; }
         internal IScannerAPI Scanner { get => scanner; set => scanner = value; }
-        internal IPremiumCardAPI CardReaader { get => cardReaader; set => cardReaader = value; }
+        internal IPremiumCardAPI CardReader { get => cardReader; set => cardReader = value; }
         internal IStandardButtonsAPI Buttons { get => buttons; set => buttons = value; }
         internal ICashMachineOutput CashOutput { get => cashOutput; set => cashOutput = value; }
         internal ICashMachineAPI CashMachine { get => cashMachine; set => cashMachine = value; }
@@ -55,7 +55,7 @@ namespace ParkingApplication
             EntranceParkingDevice ret = new EntranceParkingDevice(dialog, gate, ticketPrinter, normalTicketDB, handicappedTicketDB, premiumDatabase);
             buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, ret);
             buttons.AddButtonObserver(ButtonKey.SPECIAL_BUTTON, ret);
-            cardReaader.AddPremiumCardObserver(ret);
+            cardReader.AddPremiumCardObserver(ret);
             return ret;
         }
 
@@ -66,7 +66,7 @@ namespace ParkingApplication
             bank.SetContext(ret, dialog);
             cashMachine.AddCashMachineObserver(bank);
             scanner.AddScannerObserver(ret);
-            cardReaader.AddPremiumCardObserver(ret);
+            cardReader.AddPremiumCardObserver(ret);
             buttons.AddButtonObserver(ButtonKey.ACCEPT_BUTTON, ret);
             buttons.AddButtonObserver(ButtonKey.SPECIAL_BUTTON, ret);
             buttons.AddButtonObserver(ButtonKey.CANCEL_BUTTON, ret);
@@ -77,7 +77,7 @@ namespace ParkingApplication
         {
             ExitParkingDevice ret = new ExitParkingDevice(dialog, gate, normalTicketDB, handicappedTicketDB, premiumDatabase);
             scanner.AddScannerObserver(ret);
-            cardReaader.AddPremiumCardObserver(ret);
+            cardReader.AddPremiumCardObserver(ret);
             return ret;
         }
     }
