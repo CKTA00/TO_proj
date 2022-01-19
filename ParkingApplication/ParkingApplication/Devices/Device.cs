@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ParkingApplication.DeviceInterface;
+﻿using ParkingApplication.DeviceInterface;
 using ParkingApplication.ParkingSystem;
 using ParkingApplication.Premium;
 

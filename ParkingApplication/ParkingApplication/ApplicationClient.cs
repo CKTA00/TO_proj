@@ -1,10 +1,6 @@
-﻿using System;
-using ParkingApplication.Devices;
+﻿using ParkingApplication.Devices;
 using ParkingApplication.DeviceInterface;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ParkingApplication.ParkingSystem;
 using ParkingApplication.Util;
 using ParkingApplication.Premium;

@@ -47,7 +47,6 @@
     <Compile Include="CashSystem\TicketPrices.cs" />
     <Compile Include="DeviceBuilder.cs" />
     <Compile Include="CashSystem\AllowedDenominations.cs" />
-    <Compile Include="CashSystem\Denomination.cs" />
     <Compile Include="DeviceInterface\ICashMachineAPI.cs" />
     <Compile Include="DeviceInterface\ICashMachineOutput.cs" />
     <Compile Include="DeviceInterface\ICodeScannerObserver.cs" />
