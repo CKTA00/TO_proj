@@ -172,7 +172,7 @@ namespace ParkingApplication
             {
                 con.ShowMessage("\n\n>press accept");
                 con.ShowMessage("\tNaciśnij główny przycisk.");
-                con.ShowMessage(">press cancel");
+                con.ShowMessage(">press special");
                 con.ShowMessage("\tNaciśnij przycisk z ikoną niepełnosprawnego człowieka.");
                 con.ShowMessage(">press cancel");
                 con.ShowMessage("\tNaciśnij anuluj.");
