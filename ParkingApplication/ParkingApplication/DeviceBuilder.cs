@@ -21,9 +21,9 @@ namespace ParkingApplication
         ICashMachineAPI cashMachine;
 
         // database:
-        TicketDatabase normalTicketDB;
-        TicketDatabase handicappedTicketDB;
-        PremiumDatabase premiumDatabase;
+        ITicketDatabase normalTicketDB;
+        ITicketDatabase handicappedTicketDB;
+        IPremiumDatabase premiumDatabase;
 
         internal ISimpleDialog Dialog { get => dialog; set => dialog = value; }
         internal IGateAPI Gate { get => gate; set => gate = value; }
@@ -34,9 +34,9 @@ namespace ParkingApplication
         internal ICashMachineOutput CashOutput { get => cashOutput; set => cashOutput = value; }
         internal ICashMachineAPI CashMachine { get => cashMachine; set => cashMachine = value; }
 
-        internal TicketDatabase NormalTicketDB { get => normalTicketDB; set => normalTicketDB = value; }
-        internal TicketDatabase HandicappedTicketDB { get => handicappedTicketDB; set => handicappedTicketDB = value; }
-        internal PremiumDatabase PremiumDatabase { get => premiumDatabase; set => premiumDatabase = value; }
+        internal ITicketDatabase NormalTicketDB { get => normalTicketDB; set => normalTicketDB = value; }
+        internal ITicketDatabase HandicappedTicketDB { get => handicappedTicketDB; set => handicappedTicketDB = value; }
+        internal IPremiumDatabase PremiumDatabase { get => premiumDatabase; set => premiumDatabase = value; }
 
         private DeviceBuilder()
         {

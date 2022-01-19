@@ -8,7 +8,7 @@ namespace ParkingApplication.Devices
     {
         protected IGateAPI gate;
         public GateDevice(ISimpleDialog initDisplay, IGateAPI gate,
-            TicketDatabase normalTicketsDB, TicketDatabase handicappedTicketsDB, PremiumDatabase premiumDB)
+            ITicketDatabase normalTicketsDB, ITicketDatabase handicappedTicketsDB, IPremiumDatabase premiumDB)
             : base(initDisplay, normalTicketsDB, handicappedTicketsDB, premiumDB)
         {
             this.gate = gate;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ParkingApplication.Premium
 {
-    class PremiumDatabase
+    class PremiumDatabase: IPremiumDatabase
     {
         Dictionary<string, PremiumUser> premiumUsers;
         ICodeGenerator generator;
@@ -12,9 +12,9 @@ namespace ParkingApplication.Premium
         public PremiumDatabase(ICodeGenerator generator, List<PremiumUser> premiumUsers = null)
         {
             this.premiumUsers = new Dictionary<string, PremiumUser>();
-            if(premiumUsers!=null)
+            if (premiumUsers != null)
             {
-                foreach(PremiumUser t in premiumUsers)
+                foreach (PremiumUser t in premiumUsers)
                 {
                     this.premiumUsers.Add(t.Code, t);
                 }
@@ -25,14 +25,14 @@ namespace ParkingApplication.Premium
         public PremiumUser RegisterPremiumUser(string plateNumber)
         {
             string code = generator.Generate();
-            PremiumUser u = new PremiumUser(code, DateTime.Now + new TimeSpan(90,0,0,0), plateNumber);
+            PremiumUser u = new PremiumUser(code, DateTime.Now + new TimeSpan(90, 0, 0, 0), plateNumber);
             premiumUsers.Add(code, u);
             return u;
         }
 
         public PremiumUser GetPremiumUser(string plateNumber, string code)
         {
-            if(premiumUsers.ContainsKey(code) && premiumUsers[code].RegistrationPlate == plateNumber)
+            if (premiumUsers.ContainsKey(code) && premiumUsers[code].RegistrationPlate == plateNumber)
             {
                 return premiumUsers[code];
             }
@@ -44,7 +44,7 @@ namespace ParkingApplication.Premium
 
         public PremiumUser FindUserByCode(string code)
         {
-            if(premiumUsers.ContainsKey(code))
+            if (premiumUsers.ContainsKey(code))
             {
                 return premiumUsers[code];
             }

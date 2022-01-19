@@ -25,9 +25,9 @@ namespace ParkingApplication
             machine = new ConsoleMachineAPI();
             generator = new GUIDGenerator();
 
-            TicketDatabase normalTicketDB = new TicketDatabase(generator, 40);
-            TicketDatabase handicappedTicketDB = new TicketDatabase(generator, 5);
-            PremiumDatabase premiumDatabase = new PremiumDatabase(generator);
+            ITicketDatabase normalTicketDB = new TicketDatabase(generator, 40);
+            ITicketDatabase handicappedTicketDB = new TicketDatabase(generator, 5);
+            IPremiumDatabase premiumDatabase = new PremiumDatabase(generator);
 
             builder = DeviceBuilder.GetInstance();
             builder.Buttons = machine;

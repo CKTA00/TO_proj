@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ParkingApplication.ParkingSystem
 {
-    class TicketDatabase
+    class TicketDatabase : ITicketDatabase
     {
         Dictionary<string, Ticket> tickets;
         ICodeGenerator generator;
@@ -15,15 +15,15 @@ namespace ParkingApplication.ParkingSystem
         {
             this.tickets = new Dictionary<string, Ticket>();
             counter = 0;
-            if(tickets!=null)
+            if (tickets != null)
             {
-                foreach(Ticket t in tickets)
+                foreach (Ticket t in tickets)
                 {
                     this.tickets.Add(t.Code, t);
                 }
                 counter++;
             }
-            
+
             this.placesMax = placesMax;
             this.generator = generator;
         }
@@ -45,7 +45,7 @@ namespace ParkingApplication.ParkingSystem
 
         public Ticket TryEvaluateTicket(string code)
         {
-            if(tickets.ContainsKey(code) && tickets[code].Code == code) //whatever, chcek both
+            if (tickets.ContainsKey(code) && tickets[code].Code == code) //whatever, chcek both
             {
                 return tickets[code];
             }

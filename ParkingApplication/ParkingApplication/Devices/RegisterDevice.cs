@@ -21,7 +21,7 @@ namespace ParkingApplication.Devices
 
         internal CoinContainer Bank { get => bank; }
 
-        public RegisterDevice(ISimpleDialog initDisplay, TicketDatabase normalDB, TicketDatabase handicappedDB, PremiumDatabase premiumDB, CoinContainer bank, IPriceStrategy ticketPrice, IPriceStrategy premiumPrice) 
+        public RegisterDevice(ISimpleDialog initDisplay, ITicketDatabase normalDB, ITicketDatabase handicappedDB, IPremiumDatabase premiumDB, CoinContainer bank, IPriceStrategy ticketPrice, IPriceStrategy premiumPrice) 
             : base(initDisplay, normalDB, handicappedDB, premiumDB)
         {
             this.ticketPrice = ticketPrice;
@@ -142,7 +142,7 @@ namespace ParkingApplication.Devices
             if (EndTransaction()) return;
             currentUser = null;
             Ticket ticket;
-            TicketDatabase sourceDB;
+            ITicketDatabase sourceDB;
             try
             {
                 ticket = normalTicketsDB.TryEvaluateTicket(code);

@@ -7,7 +7,7 @@ namespace ParkingApplication.Devices
 {
     class ExitParkingDevice : GateDevice, ICodeScannerObserver
     {
-        public ExitParkingDevice(ISimpleDialog initDisplay, IGateAPI machine, TicketDatabase normalTicketsDB, TicketDatabase handicappedTicketsDB, PremiumDatabase premiumDB) 
+        public ExitParkingDevice(ISimpleDialog initDisplay, IGateAPI machine, ITicketDatabase normalTicketsDB, ITicketDatabase handicappedTicketsDB, IPremiumDatabase premiumDB) 
             : base(initDisplay, machine, normalTicketsDB, handicappedTicketsDB, premiumDB)
         {
 
@@ -22,7 +22,7 @@ namespace ParkingApplication.Devices
         public void CodeScanned(string code)
         {
             Ticket ticket;
-            TicketDatabase sourceDB;
+            ITicketDatabase sourceDB;
             try
             {
                 ticket = normalTicketsDB.TryEvaluateTicket(code);

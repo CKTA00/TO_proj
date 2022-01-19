@@ -62,14 +62,16 @@
     <Compile Include="CashSystem\IPriceStrategy.cs" />
     <Compile Include="Devices\NoMoneyInBankException.cs" />
     <Compile Include="Devices\RegisterDevice.cs" />
+    <Compile Include="ParkingSystem\TicketDatabase.cs" />
     <Compile Include="Premium\InvalidPremiumUserCodeException.cs" />
     <Compile Include="Premium\PremiumCurrentlyUsedException.cs" />
+    <Compile Include="Premium\PremiumDatabase.cs" />
     <Compile Include="Util\GUIDGenerator.cs" />
     <Compile Include="Util\ICodeGenerator.cs" />
     <Compile Include="ParkingSystem\InvalidTicketCodeException.cs" />
     <Compile Include="ParkingSystem\NoPlaceLeftException.cs" />
     <Compile Include="ParkingSystem\Ticket.cs" />
-    <Compile Include="ParkingSystem\TicketDatabase.cs" />
+    <Compile Include="ParkingSystem\ITicketDatabase.cs" />
     <Compile Include="DeviceInterface\ButtonKey.cs" />
     <Compile Include="DeviceInterface\ConsoleDisplay.cs" />
     <Compile Include="DeviceInterface\ICashMachineObserver.cs" />
@@ -80,7 +82,7 @@
     <Compile Include="Devices\Device.cs" />
     <Compile Include="ApplicationClient.cs" />
     <Compile Include="Premium\PremiumUser.cs" />
-    <Compile Include="Premium\PremiumDatabase.cs" />
+    <Compile Include="Premium\IPremiumDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DeviceInterface\ConsoleMachineAPI.cs" />
     <Compile Include="Devices\EntranceParkingDevice.cs" />

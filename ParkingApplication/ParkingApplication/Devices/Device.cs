@@ -7,11 +7,11 @@ namespace ParkingApplication.Devices
     abstract class Device : IButtonObserver, IPremiumCardObserver
     {
         protected ISimpleDialog display;
-        protected TicketDatabase normalTicketsDB;
-        protected TicketDatabase handicappedTicketsDB;
-        protected PremiumDatabase premiumDB;
+        protected ITicketDatabase normalTicketsDB;
+        protected ITicketDatabase handicappedTicketsDB;
+        protected IPremiumDatabase premiumDB;
 
-        public Device(ISimpleDialog initDisplay, TicketDatabase normalDB, TicketDatabase handicappedDB, PremiumDatabase premiumDB)
+        public Device(ISimpleDialog initDisplay, ITicketDatabase normalDB, ITicketDatabase handicappedDB, IPremiumDatabase premiumDB)
         {
             display = initDisplay;
             this.normalTicketsDB = normalDB;
