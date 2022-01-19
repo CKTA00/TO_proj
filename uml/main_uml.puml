@@ -70,6 +70,11 @@ package "DeviceInterface"{
         +PrintTicket(Ticket t)
     }
 
+    interface ICashMachineOutput{
+            +ThrowCoin(AllowedDenominations den): void
+            +ThrowCoins(AllowedDenominations den, int amount): void
+    }
+
     interface ISimpleDialog{
         +ShowMessage(String msg): void
         +ReadString(): string
@@ -90,7 +95,7 @@ package "DeviceInterface"{
         +ReadString(): string
     }
 
-    class ConsoleMachineAPI implements  ISimpleDialog, IGateAPI, IStandardButtonsAPI, ICashMachineAPI, IPrinterAPI,IScannerAPI,IPremiumCardAPI{
+    class ConsoleMachineAPI implements  ISimpleDialog, IGateAPI, IStandardButtonsAPI, ICashMachineAPI, IPrinterAPI,IScannerAPI,IPremiumCardAPI, ICashMachineOutput{
 
     }
 
